@@ -57,12 +57,12 @@ bun install
 
 ## 3. Add API Keys
 
-To use this AI-powered voice assistant, you need to provide the necessary API keys for the selected AI models and services. 
+To use this AI-powered voice assistant, you need to provide the necessary API keys for the selected AI models and services.
 
 ### Required for core functionality
 - **Groq API Key** For Llama + Whisper
 - **OpenAI API Key** for TTS and Vision + Whisper
-- **Serper API Key** for Internet Results 
+- **Serper API Key** for Internet Results
 
 ### Optional for advanced configuration
 - **Langchain Tracing** for function execution tracing
@@ -131,15 +131,3 @@ export const config = {
     useLangSmith: true, // Use LangSmith by Langchain to trace the execution of the functions in the config.tsx set to true to use.
 };
 ```
-
-## Contributing
-
-Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
-
-I'm the developer behind Developers Digest. If you find my work helpful or enjoy what I do, consider supporting me. Here are a few ways you can do that:
-
-- **Patreon**: Support me on Patreon at [patreon.com/DevelopersDigest](https://www.patreon.com/DevelopersDigest)
-- **Buy Me A Coffee**: You can buy me a coffee at [buymeacoffee.com/developersdigest](https://www.buymeacoffee.com/developersdigest)
-- **Website**: Check out my website at [developersdigest.tech](https://developersdigest.tech)
-- **Github**: Follow me on GitHub at [github.com/developersdigest](https://github.com/developersdigest)
-- **Twitter**: Follow me on Twitter at [twitter.com/dev__digest](https://twitter.com/dev__digest)

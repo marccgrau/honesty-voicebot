@@ -3,7 +3,7 @@ import { createAI, createStreamableValue, createStreamableUI } from 'ai/rsc';
 import { config } from './config';
 import dotenv from 'dotenv';
 dotenv.config();
-// Rate limiting
+// Rate limiting 
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { headers } from 'next/headers'
@@ -11,11 +11,11 @@ let ratelimit: Ratelimit | undefined;
 if (config.useRateLimiting) {
     ratelimit = new Ratelimit({
         redis: Redis.fromEnv(),
-        limiter: Ratelimit.slidingWindow(10, "10 m") // 10 requests per 10 minutes
+        limiter: Ratelimit.slidingWindow(30, "10 m") // 30 requests per 10 minutes
     });
 }
 // Rate limiting
-import { transcribeAudio } from './utils/transcribeAudio'; 
+import { transcribeAudio } from './utils/transcribeAudio';
 import { generateTTS } from './utils/generateTTS';
 import { processImageWithGPT4o, processImageWithLllavaOnFalAI, processImageWithGoogleGenerativeAI } from './utils/processImage';
 import { generateChatCompletion } from './utils/generateChatCompletion';

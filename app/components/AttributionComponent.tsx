@@ -21,7 +21,7 @@ export const AttributionComponent: React.FC<AttributionComponentProps> = ({ useP
     } = config;
 
     return (
-        <div className="absolute bottom-0 right-10 bottom-10 text-xs text-center">
+        <div className="absolute bottom-0 right-10 text-xs text-center">
             speech recognition: {whisperModel}: {whisperModelProvider}
             {usePhotos && `, vision: ${visionModel}: ${visionModelProvider}`}
             {!usePhotos && `, inference: ${inferenceModel}: ${inferenceModelProvider}`}

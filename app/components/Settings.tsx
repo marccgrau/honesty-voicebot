@@ -5,12 +5,10 @@ interface SettingsProps {
   useInternet: boolean;
   usePhotos: boolean;
   useLudicrousMode: boolean;
-  useRabbitMode: boolean;
   onTTSToggle: () => void;
   onInternetToggle: () => void;
   onPhotosToggle: () => void;
   onLudicrousModeToggle: () => void;
-  onRabbitModeToggle: () => void;
   setTTS: (useTTS: boolean) => void;
   setInternet: (useInternet: boolean) => void;
   setPhotos: (usePhotos: boolean) => void;
@@ -21,12 +19,10 @@ export const Settings: React.FC<SettingsProps> = ({
   useInternet,
   usePhotos,
   useLudicrousMode,
-  useRabbitMode,
   onTTSToggle,
   onInternetToggle,
   onPhotosToggle,
   onLudicrousModeToggle,
-  onRabbitModeToggle,
   setTTS,
   setInternet,
   setPhotos,
@@ -120,24 +116,6 @@ export const Settings: React.FC<SettingsProps> = ({
           </label>
         </div>
       )}
-      <div className="flex items-center">
-        <label htmlFor="rabbit-mode-toggle" className="flex items-center cursor-pointer">
-          <div className="relative">
-            <input
-              type="checkbox"
-              id="rabbit-mode-toggle"
-              className="sr-only"
-              checked={useRabbitMode}
-              onChange={onRabbitModeToggle}
-            />
-            <div className={`block w-10 h-6 rounded-full ${useRabbitMode ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-            <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition ${useRabbitMode ? 'transform translate-x-full' : ''}`}></div>
-          </div>
-          <div className="ml-3 text-sm flex items-center">
-            Rabbit Mode
-          </div>
-        </label>
-      </div>
     </div>
   );
 };
