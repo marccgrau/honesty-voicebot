@@ -37,11 +37,11 @@ export const Settings: React.FC<SettingsProps> = ({
   };
 
   return (
-    <div className="absolute bottom-24 left-7 bg-white rounded-md shadow-md p-4 animate-slide-up">
+    <div className="animate-slide-up absolute bottom-24 left-7 rounded-md bg-white p-4 shadow-md">
       {config.enabledLudicrousMode && (
         <>
-          <div className="flex items-center mb-1">
-            <label htmlFor="ludicrous-mode-toggle" className="flex items-center cursor-pointer">
+          <div className="mb-1 flex items-center">
+            <label htmlFor="ludicrous-mode-toggle" className="flex cursor-pointer items-center">
               <div className="relative">
                 <input
                   type="checkbox"
@@ -50,19 +50,23 @@ export const Settings: React.FC<SettingsProps> = ({
                   checked={useLudicrousMode}
                   onChange={handleLudicrousModeToggle}
                 />
-                <div className={`block w-10 h-6 rounded-full ${useLudicrousMode ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-                <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition ${useLudicrousMode ? 'transform translate-x-full' : ''}`}></div>
+                <div
+                  className={`block h-6 w-10 rounded-full ${useLudicrousMode ? 'bg-green-500' : 'bg-gray-300'}`}
+                ></div>
+                <div
+                  className={`absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition ${useLudicrousMode ? 'translate-x-full transform' : ''}`}
+                ></div>
               </div>
               <div className="ml-3 text-sm">Ludicrous Mode</div>
             </label>
           </div>
-          <div className="text-xs text-gray-500 mb-2">(Groq Llama3 + Groq Whisper only)</div>
+          <div className="mb-2 text-xs text-gray-500">(Groq Llama3 + Groq Whisper only)</div>
         </>
       )}
       {config.enableTextToSpeechUIToggle && (
-        <div className="flex items-center mb-2">
-          <label htmlFor="tts-toggle" className="flex items-center cursor-pointer">
-            <div className={`relative ${useLudicrousMode ? 'opacity-50 cursor-not-allowed' : ''}`}>
+        <div className="mb-2 flex items-center">
+          <label htmlFor="tts-toggle" className="flex cursor-pointer items-center">
+            <div className={`relative ${useLudicrousMode ? 'cursor-not-allowed opacity-50' : ''}`}>
               <input
                 type="checkbox"
                 id="tts-toggle"
@@ -71,17 +75,21 @@ export const Settings: React.FC<SettingsProps> = ({
                 onChange={onTTSToggle}
                 disabled={useLudicrousMode}
               />
-              <div className={`block w-10 h-6 rounded-full ${useTTS && !useLudicrousMode ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-              <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition ${useTTS && !useLudicrousMode ? 'transform translate-x-full' : ''}`}></div>
+              <div
+                className={`block h-6 w-10 rounded-full ${useTTS && !useLudicrousMode ? 'bg-green-500' : 'bg-gray-300'}`}
+              ></div>
+              <div
+                className={`absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition ${useTTS && !useLudicrousMode ? 'translate-x-full transform' : ''}`}
+              ></div>
             </div>
             <div className="ml-3 text-sm">Text-to-Speech</div>
           </label>
         </div>
       )}
       {config.enableInternetResultsUIToggle && (
-        <div className="flex items-center mb-2">
-          <label htmlFor="internet-toggle" className="flex items-center cursor-pointer">
-            <div className={`relative ${useLudicrousMode ? 'opacity-50 cursor-not-allowed' : ''}`}>
+        <div className="mb-2 flex items-center">
+          <label htmlFor="internet-toggle" className="flex cursor-pointer items-center">
+            <div className={`relative ${useLudicrousMode ? 'cursor-not-allowed opacity-50' : ''}`}>
               <input
                 type="checkbox"
                 id="internet-toggle"
@@ -90,17 +98,21 @@ export const Settings: React.FC<SettingsProps> = ({
                 onChange={onInternetToggle}
                 disabled={useLudicrousMode}
               />
-              <div className={`block w-10 h-6 rounded-full ${useInternet && !useLudicrousMode ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-              <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition ${useInternet && !useLudicrousMode ? 'transform translate-x-full' : ''}`}></div>
+              <div
+                className={`block h-6 w-10 rounded-full ${useInternet && !useLudicrousMode ? 'bg-green-500' : 'bg-gray-300'}`}
+              ></div>
+              <div
+                className={`absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition ${useInternet && !useLudicrousMode ? 'translate-x-full transform' : ''}`}
+              ></div>
             </div>
             <div className="ml-3 text-sm">Use Internet Results</div>
           </label>
         </div>
       )}
       {config.enableUsePhotUIToggle && (
-        <div className="flex items-center mb-2">
-          <label htmlFor="photos-toggle" className="flex items-center cursor-pointer">
-            <div className={`relative ${useLudicrousMode ? 'opacity-50 cursor-not-allowed' : ''}`}>
+        <div className="mb-2 flex items-center">
+          <label htmlFor="photos-toggle" className="flex cursor-pointer items-center">
+            <div className={`relative ${useLudicrousMode ? 'cursor-not-allowed opacity-50' : ''}`}>
               <input
                 type="checkbox"
                 id="photos-toggle"
@@ -109,8 +121,12 @@ export const Settings: React.FC<SettingsProps> = ({
                 onChange={onPhotosToggle}
                 disabled={useLudicrousMode}
               />
-              <div className={`block w-10 h-6 rounded-full ${usePhotos && !useLudicrousMode ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-              <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition ${usePhotos && !useLudicrousMode ? 'transform translate-x-full' : ''}`}></div>
+              <div
+                className={`block h-6 w-10 rounded-full ${usePhotos && !useLudicrousMode ? 'bg-green-500' : 'bg-gray-300'}`}
+              ></div>
+              <div
+                className={`absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition ${usePhotos && !useLudicrousMode ? 'translate-x-full transform' : ''}`}
+              ></div>
             </div>
             <div className="ml-3 text-sm">Use Photos</div>
           </label>

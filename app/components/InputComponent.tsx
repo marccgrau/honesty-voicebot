@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { useState, useRef } from 'react';
 import { FaMicrophone } from 'react-icons/fa';
 
@@ -20,7 +20,6 @@ const InputComponent: React.FC<InputComponentProps> = ({
   const [recording, setRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
-
 
   const handleMouseDown = () => {
     startRecording();
@@ -61,23 +60,21 @@ const InputComponent: React.FC<InputComponentProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-full">
-      <FaMicrophone className="text-5xl text-gray-600 mb-4" />
+    <div className="flex h-full flex-col items-center justify-center">
+      <FaMicrophone className="mb-4 text-5xl text-gray-600" />
       <button
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         onTouchStart={handleMouseDown}
         onTouchEnd={handleMouseUp}
-        className={`bg-green-500 text-white font-bold py-2 px-4 rounded-full mb-4 ${recording ? 'bg-red-500' : 'bg-green-500'}`}
+        className={`mb-4 rounded-full bg-green-500 px-4 py-2 font-bold text-white ${recording ? 'bg-red-500' : 'bg-green-500'}`}
       >
         {recording ? 'Recording...' : 'Press and hold to record'}
       </button>
-      <p className="text-xs text-gray-600 text-center">
-        Hold the button to record audio
-      </p>
+      <p className="text-center text-xs text-gray-600">Hold the button to record audio</p>
       {recording && (
         <div className="mt-2">
-          <div className="w-2 h-2 bg-red-500 rounded-full shadow-pulse"></div>
+          <div className="shadow-pulse h-2 w-2 rounded-full bg-red-500"></div>
         </div>
       )}
     </div>

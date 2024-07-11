@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { AI } from "./action";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { AI } from './action';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "pin",
-  description: "Health Insurance Experiment, University of St. Gallen",
+  title: 'HealthInsuranceExperiment',
+  description: 'Health Insurance Experiment, University of St. Gallen',
 };
 
 export default function RootLayout({

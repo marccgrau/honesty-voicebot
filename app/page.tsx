@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { useState, useEffect } from 'react';
 import { useActions, readStreamableValue } from 'ai/rsc';
 import { type AI } from './action';
@@ -33,7 +33,10 @@ const Main = () => {
   const [useInternet, setUseInternet] = useState(false);
   const [usePhotos, setUsePhotos] = useState(false);
   const [useSpotify, setUseSpotify] = useState('');
-  const [currentTranscription, setCurrentTranscription] = useState<{ transcription: string, responseTime: number } | null>(null);
+  const [currentTranscription, setCurrentTranscription] = useState<{
+    transcription: string;
+    responseTime: number;
+  } | null>(null);
   const [totalResponseTime, setTotalResponseTime] = useState<number | null>(null);
   const [currentUIComponent, setCurrentUIComponent] = useState<UIComponent | null>(null);
   const [message, setMessage] = useState<{ message: string; responseTime: number } | null>(null);
@@ -75,7 +78,10 @@ const Main = () => {
       if (message && message.transcription && typeof message.transcription === 'string') {
         transcriptionResponseTime = (Date.now() - startTime) / 1000;
         transcriptionCompletionTime = Date.now();
-        setCurrentTranscription({ transcription: message.transcription, responseTime: transcriptionResponseTime });
+        setCurrentTranscription({
+          transcription: message.transcription,
+          responseTime: transcriptionResponseTime,
+        });
       }
       if (message && message.weather && typeof message.weather === 'string') {
         setCurrentUIComponent({ component: 'weather', data: JSON.parse(message.weather) });
@@ -117,12 +123,12 @@ const Main = () => {
     };
   }, []);
   return (
-    <div className="flex flex-col min-h-screen bg-white">
+    <div className="flex min-h-screen flex-col bg-white">
       {isMobile ? (
         <MobileNotSupported />
       ) : (
         <div className="flex flex-1">
-          <div className="w-1/2 flex justify-center items-center">
+          <div className="flex w-1/2 items-center justify-center">
             <InputComponent
               onSubmit={handleSubmit}
               useTTS={useTTS}
@@ -131,46 +137,51 @@ const Main = () => {
               useLudicrousMode={useLudicrousMode}
             />
           </div>
-          <div className="w-1/2 flex flex-col items-center px-4 mt-4">
-            <div className="max-w-[700px] w-full">
+          <div className="mt-4 flex w-1/2 flex-col items-center px-4">
+            <div className="w-full max-w-[700px]">
               {message && message.message && (
-                <div className="bg-gray-100 p-4 rounded shadow-md mb-4">
+                <div className="mb-4 rounded bg-gray-100 p-4 shadow-md">
                   <p>{message.message}</p>
                   {config.enableResponseTimes && (
-                    <p className="text-xs text-gray-500">Response time: +{message.responseTime.toFixed(2)} seconds</p>
+                    <p className="text-xs text-gray-500">
+                      Response time: +{message.responseTime.toFixed(2)} seconds
+                    </p>
                   )}
                 </div>
               )}
               {currentTranscription && (
-                <div className="bg-gray-100 p-4 rounded shadow-md mb-4">
+                <div className="mb-4 rounded bg-gray-100 p-4 shadow-md">
                   <p>{currentTranscription.transcription}</p>
                   {config.enableResponseTimes && (
-                    <p className="text-xs text-gray-500">Transcription response time: +{currentTranscription.responseTime.toFixed(2)} seconds</p>
+                    <p className="text-xs text-gray-500">
+                      Transcription response time: +{currentTranscription.responseTime.toFixed(2)}{' '}
+                      seconds
+                    </p>
                   )}
                 </div>
               )}
               {currentUIComponent && currentUIComponent.component === 'weather' && (
                 <WeatherData data={currentUIComponent.data} />
               )}
-              {currentUIComponent && currentUIComponent.component === 'time' && (
-                <ClockComponent />
-              )}
-              {useSpotify && (
-                <SpotifyTrack trackId={useSpotify} width={300} height={80} />
-              )}
+              {currentUIComponent && currentUIComponent.component === 'time' && <ClockComponent />}
+              {useSpotify && <SpotifyTrack trackId={useSpotify} width={300} height={80} />}
             </div>
           </div>
         </div>
       )}
       {config.enableSettingsUIToggle && (
         <div
-          className="absolute bottom-7 left-7 w-12 h-12 bg-white rounded-full shadow-md flex items-center justify-center cursor-pointer"
+          className="absolute bottom-7 left-7 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-white shadow-md"
           onClick={handleSettingsClick}
         >
           <img
-            src={showSettings ? "https://upload.wikimedia.org/wikipedia/commons/a/a0/OOjs_UI_icon_close.svg" : "https://upload.wikimedia.org/wikipedia/commons/2/20/Factotum_gear_icon.svg"}
-            alt={showSettings ? "Close Settings" : "Settings"}
-            className="w-6 h-6"
+            src={
+              showSettings
+                ? 'https://upload.wikimedia.org/wikipedia/commons/a/a0/OOjs_UI_icon_close.svg'
+                : 'https://upload.wikimedia.org/wikipedia/commons/2/20/Factotum_gear_icon.svg'
+            }
+            alt={showSettings ? 'Close Settings' : 'Settings'}
+            className="h-6 w-6"
           />
         </div>
       )}
@@ -190,7 +201,12 @@ const Main = () => {
         />
       )}
       {config.useAttributionComponent && (
-        <AttributionComponent usePhotos={usePhotos} useInternet={useInternet} useTTS={useTTS} useRateLimiting={config.useRateLimiting} />
+        <AttributionComponent
+          usePhotos={usePhotos}
+          useInternet={useInternet}
+          useTTS={useTTS}
+          useRateLimiting={config.useRateLimiting}
+        />
       )}
     </div>
   );
