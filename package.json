@@ -61,5 +61,10 @@
     "*.{ts,js,css,md}": "prettier --write",
     "*.js": "eslint --cache --fix",
     "*.{js,css,md}": "prettier --write"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "bun run lint && git add -A ."
+    }
   }
 }
