@@ -10,6 +10,7 @@ import { WeatherData } from './components/tools/Weather';
 import { SpotifyTrack } from './components/tools/Spotify';
 import { ClockComponent } from './components/tools/Clock';
 import { config } from './config';
+import Image from 'next/image';
 
 interface Message {
   rateLimitReached: any;
@@ -28,7 +29,6 @@ interface UIComponent {
 
 const Main = () => {
   const { action } = useActions<typeof AI>();
-  const [useLudicrousMode, setUseLudicrousMode] = useState(false);
   const [useTTS, setUseTTS] = useState(false);
   const [useInternet, setUseInternet] = useState(false);
   const [usePhotos, setUsePhotos] = useState(false);
@@ -55,10 +55,6 @@ const Main = () => {
     setUseInternet(!useInternet);
   };
 
-  const handleLudicrousModeToggle = () => {
-    setUseLudicrousMode(!useLudicrousMode);
-  };
-
   const handleSubmit = async (formData: FormData) => {
     const startTime = Date.now();
     const streamableValue = await action(formData);
@@ -68,7 +64,9 @@ const Main = () => {
     let audioResponseTime;
     setCurrentUIComponent(null);
     setMessage(null);
+
     for await (const message of readStreamableValue<Message>(streamableValue)) {
+      console.log('Received Message:', message?.result);
       if (message && message.rateLimitReached && typeof message.rateLimitReached === 'string') {
         setMessage({ message: message.rateLimitReached, responseTime: 0 });
       }
@@ -134,7 +132,6 @@ const Main = () => {
               useTTS={useTTS}
               useInternet={useInternet}
               usePhotos={usePhotos}
-              useLudicrousMode={useLudicrousMode}
             />
           </div>
           <div className="mt-4 flex w-1/2 flex-col items-center px-4">
@@ -174,24 +171,24 @@ const Main = () => {
           className="absolute bottom-7 left-7 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-white shadow-md"
           onClick={handleSettingsClick}
         >
-          <img
+          <Image
             src={
               showSettings
                 ? 'https://upload.wikimedia.org/wikipedia/commons/a/a0/OOjs_UI_icon_close.svg'
                 : 'https://upload.wikimedia.org/wikipedia/commons/2/20/Factotum_gear_icon.svg'
             }
             alt={showSettings ? 'Close Settings' : 'Settings'}
+            width={24}
+            height={24}
             className="h-6 w-6"
           />
         </div>
       )}
       {showSettings && (
         <Settings
-          useLudicrousMode={useLudicrousMode}
           useTTS={useTTS}
           useInternet={useInternet}
           usePhotos={usePhotos}
-          onLudicrousModeToggle={handleLudicrousModeToggle}
           onTTSToggle={handleTTSToggle}
           onInternetToggle={handleInternetToggle}
           onPhotosToggle={() => setUsePhotos(!usePhotos)}

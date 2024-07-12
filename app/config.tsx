@@ -26,7 +26,6 @@ export const config = {
   enableTextToSpeechUIToggle: true, // Display the text to speech UI toggle
   enableInternetResultsUIToggle: true, // Display the internet results UI toggle
   enableUsePhotUIToggle: false, // Display the use photo UI toggle
-  enabledLudicrousMode: true, // Enable the ludicrous mode UI toggle
   useAttributionComponent: true, // Use the attribution component to display the attribution of the AI models/services used
 
   // Rate limiting settings

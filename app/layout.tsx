@@ -6,7 +6,7 @@ import { AI } from './action';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'HealthInsuranceExperiment',
+  title: 'Health Insurance Experiment',
   description: 'Health Insurance Experiment, University of St. Gallen',
 };
 

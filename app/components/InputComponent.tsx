@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { FaMicrophone } from 'react-icons/fa';
 
 interface InputComponentProps {
@@ -7,7 +7,6 @@ interface InputComponentProps {
   useTTS: boolean;
   useInternet: boolean;
   usePhotos: boolean;
-  useLudicrousMode: boolean;
 }
 
 const InputComponent: React.FC<InputComponentProps> = ({
@@ -15,11 +14,18 @@ const InputComponent: React.FC<InputComponentProps> = ({
   useTTS,
   useInternet,
   usePhotos,
-  useLudicrousMode,
 }) => {
   const [recording, setRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+
+  useEffect(() => {
+    let sessionId = localStorage.getItem('sessionId');
+    if (!sessionId) {
+      sessionId = crypto.randomUUID();
+      localStorage.setItem('sessionId', sessionId);
+    }
+  }, []);
 
   const handleMouseDown = () => {
     startRecording();
@@ -52,7 +58,10 @@ const InputComponent: React.FC<InputComponentProps> = ({
         formData.append('useTTS', String(useTTS));
         formData.append('useInternet', String(useInternet));
         formData.append('usePhotos', String(usePhotos));
-        formData.append('useLudicrousMode', String(useLudicrousMode));
+
+        const sessionId = localStorage.getItem('sessionId');
+        formData.append('sessionId', sessionId!);
+
         onSubmit(formData);
         chunksRef.current = [];
       });
