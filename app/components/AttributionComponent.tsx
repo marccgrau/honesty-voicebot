@@ -6,6 +6,7 @@ interface AttributionComponentProps {
   useInternet: boolean;
   useTTS: boolean;
   useRateLimiting: boolean;
+  useChainMode: boolean;
 }
 
 export const AttributionComponent: React.FC<AttributionComponentProps> = ({
@@ -13,6 +14,7 @@ export const AttributionComponent: React.FC<AttributionComponentProps> = ({
   useInternet,
   useTTS,
   useRateLimiting,
+  useChainMode,
 }) => {
   const {
     whisperModelProvider,
@@ -34,6 +36,7 @@ export const AttributionComponent: React.FC<AttributionComponentProps> = ({
       {useLangSmith && ', observability: langsmith'}
       {useInternet && ', internet search: serper'}
       {useRateLimiting && ', rate limiting: upstash redis'}
+      {useChainMode && ', chain mode: enabled'}
     </div>
   );
 };

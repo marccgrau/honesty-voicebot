@@ -7,6 +7,7 @@ interface InputComponentProps {
   useTTS: boolean;
   useInternet: boolean;
   usePhotos: boolean;
+  useChainMode: boolean;
 }
 
 const InputComponent: React.FC<InputComponentProps> = ({
@@ -14,6 +15,7 @@ const InputComponent: React.FC<InputComponentProps> = ({
   useTTS,
   useInternet,
   usePhotos,
+  useChainMode,
 }) => {
   const [recording, setRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -58,6 +60,7 @@ const InputComponent: React.FC<InputComponentProps> = ({
         formData.append('useTTS', String(useTTS));
         formData.append('useInternet', String(useInternet));
         formData.append('usePhotos', String(usePhotos));
+        formData.append('useChainMode', String(useChainMode));
 
         const sessionId = localStorage.getItem('sessionId');
         formData.append('sessionId', sessionId!);

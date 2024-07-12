@@ -34,7 +34,7 @@ const AI_INSTRUCTIONS = `To calculate your health insurance premium, please prov
   If the user attempts to divert from the interview topic, politely steer the conversation back to the interview to gather the required information. Ignore queries unrelated to the health insurance premium calculation.`;
 
 export const generateChainCompletion = traceable(
-  async (responseText: string): Promise<any> => {
+  async (responseText: string, sessionId: string): Promise<any> => {
     try {
       const prompt = ChatPromptTemplate.fromMessages([
         ['system', SYSTEM_MESSAGE],
@@ -71,7 +71,7 @@ export const generateChainCompletion = traceable(
         },
         {
           configurable: {
-            sessionId: 'foobarbaz',
+            sessionId: sessionId,
           },
         },
       );

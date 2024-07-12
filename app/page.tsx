@@ -29,6 +29,7 @@ interface UIComponent {
 
 const Main = () => {
   const { action } = useActions<typeof AI>();
+  const [useChainMode, setUseChainMode] = useState(false);
   const [useTTS, setUseTTS] = useState(false);
   const [useInternet, setUseInternet] = useState(false);
   const [usePhotos, setUsePhotos] = useState(false);
@@ -53,6 +54,10 @@ const Main = () => {
 
   const handleInternetToggle = () => {
     setUseInternet(!useInternet);
+  };
+
+  const handleChainModeToggle = () => {
+    setUseChainMode(!useChainMode);
   };
 
   const handleSubmit = async (formData: FormData) => {
@@ -132,6 +137,7 @@ const Main = () => {
               useTTS={useTTS}
               useInternet={useInternet}
               usePhotos={usePhotos}
+              useChainMode={useChainMode}
             />
           </div>
           <div className="mt-4 flex w-1/2 flex-col items-center px-4">
@@ -189,12 +195,15 @@ const Main = () => {
           useTTS={useTTS}
           useInternet={useInternet}
           usePhotos={usePhotos}
+          useChainMode={useChainMode}
           onTTSToggle={handleTTSToggle}
           onInternetToggle={handleInternetToggle}
           onPhotosToggle={() => setUsePhotos(!usePhotos)}
+          onChainModeToggle={handleChainModeToggle}
           setTTS={setUseTTS}
           setInternet={setUseInternet}
           setPhotos={setUsePhotos}
+          setChainMode={setUseChainMode}
         />
       )}
       {config.useAttributionComponent && (
@@ -203,6 +212,7 @@ const Main = () => {
           useInternet={useInternet}
           useTTS={useTTS}
           useRateLimiting={config.useRateLimiting}
+          useChainMode={useChainMode}
         />
       )}
     </div>

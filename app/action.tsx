@@ -17,6 +17,7 @@ import { generateChatCompletion } from './utils/generateChatCompletion';
 import { answerEngine } from './utils/answerEngine';
 import { chatCompletionWithTools } from './utils/chatCompletionWithTools';
 import { initializeRateLimit, checkRateLimit } from './utils/rateLimiting';
+import { generateChainCompletion } from './utils/generateChainCompletion';
 
 dotenv.config();
 
@@ -125,6 +126,16 @@ async function handleToolsResponse(responseText: string, streamable: any) {
     }
   }
   return responseText;
+}
+
+async function handleChainResponseGeneration(responseText: string, sessionId: string) {
+  try {
+    const completion = await generateChainCompletion(responseText, sessionId);
+    return completion;
+  } catch (error) {
+    console.error('Error in chain response generation:', error);
+    throw error;
+  }
 }
 
 async function action(obj: FormData): Promise<any> {
