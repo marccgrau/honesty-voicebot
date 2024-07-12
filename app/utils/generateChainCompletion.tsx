@@ -5,6 +5,7 @@ import { traceable } from 'langsmith/traceable';
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
 import { RunnableConfig, RunnableWithMessageHistory } from '@langchain/core/runnables';
 import { UpstashRedisChatMessageHistory } from '@langchain/community/stores/message/upstash_redis';
+import { get } from 'http';
 
 const UPSTASH_REDIS_REST_URL = process.env.UPSTASH_REDIS_REST_URL!;
 const UPSTASH_REDIS_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN!;
@@ -33,54 +34,72 @@ const AI_INSTRUCTIONS = `To calculate your health insurance premium, please prov
   
   If the user attempts to divert from the interview topic, politely steer the conversation back to the interview to gather the required information. Ignore queries unrelated to the health insurance premium calculation.`;
 
+// Function to create the prompt
+function createPrompt() {
+  return ChatPromptTemplate.fromMessages([
+    ['system', SYSTEM_MESSAGE],
+    new MessagesPlaceholder('history'),
+    ['human', '{input}'],
+    ['ai', AI_INSTRUCTIONS],
+  ]);
+}
+
+// Function to initialize the chain
+function initializeChain(prompt: any) {
+  return prompt.pipe(
+    new ChatOpenAI({
+      model: config.inferenceModel,
+      maxTokens: config.maxTokens,
+      temperature: config.modelTemperature,
+    }),
+  );
+}
+
+// Function to handle the chain with history
+function createChainWithHistory(
+  chain: any,
+  sessionId: string,
+): RunnableWithMessageHistory<any, any> {
+  return new RunnableWithMessageHistory({
+    runnable: chain,
+    getMessageHistory: () =>
+      new UpstashRedisChatMessageHistory({
+        sessionId,
+        config: {
+          url: UPSTASH_REDIS_REST_URL!,
+          token: UPSTASH_REDIS_REST_TOKEN!,
+        },
+      }),
+    inputMessagesKey: 'input',
+    historyMessagesKey: 'history',
+  });
+}
+
+// Main function to generate chain completion
+async function generateCompletion(transcription: string, sessionId: string): Promise<any> {
+  try {
+    const prompt = createPrompt();
+    const chain = initializeChain(prompt);
+    const chainWithHistory = createChainWithHistory(chain, sessionId);
+    const completion = await chainWithHistory.invoke(
+      { input: transcription },
+      { configurable: { sessionId } },
+    );
+
+    return completion?.lc_kwargs?.content || 'No information available.';
+  } catch (error) {
+    console.error('Error generating chain completion:', error);
+    throw error;
+  }
+}
+
+// Exporting the main function with traceability
 export const generateChainCompletion = traceable(
-  async (responseText: string, sessionId: string): Promise<any> => {
-    try {
-      const prompt = ChatPromptTemplate.fromMessages([
-        ['system', SYSTEM_MESSAGE],
-        new MessagesPlaceholder('history'),
-        ['human', '{input}'],
-        ['ai', AI_INSTRUCTIONS],
-      ]);
-
-      const chain = prompt.pipe(
-        new ChatOpenAI({
-          temperature: 0,
-          model: config.inferenceModel,
-          maxTokens: config.maxTokens,
-        }),
-      );
-
-      const chainWithHistory = new RunnableWithMessageHistory({
-        runnable: chain,
-        getMessageHistory: (sessionId: string) =>
-          new UpstashRedisChatMessageHistory({
-            sessionId,
-            config: {
-              url: UPSTASH_REDIS_REST_URL!,
-              token: UPSTASH_REDIS_REST_TOKEN!,
-            },
-          }),
-        inputMessagesKey: 'input',
-        historyMessagesKey: 'history',
-      });
-
-      const completion = await chainWithHistory.invoke(
-        {
-          input: responseText,
-        },
-        {
-          configurable: {
-            sessionId: sessionId,
-          },
-        },
-      );
-
-      return completion;
-    } catch (error) {
-      console.error('Error generating chain completion:', error);
-      throw error;
+  async (transcription: string, sessionId: string): Promise<any> => {
+    if (config.inferenceModelProvider !== 'openai') {
+      throw new Error('This functionality is not yet available for the specified provider.');
     }
+    return generateCompletion(transcription, sessionId);
   },
   { name: 'generateChainCompletion' },
 );

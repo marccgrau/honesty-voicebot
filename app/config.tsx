@@ -1,7 +1,7 @@
 export const config = {
   // Inference settings
-  inferenceModelProvider: 'groq', // 'groq' or 'openai'
-  inferenceModel: 'llama3-8b-8192', // Groq: 'llama3-70b-8192' or 'llama3-8b-8192'.. OpenAI: 'gpt-4-turbo etc
+  inferenceModelProvider: 'openai', // 'groq' or 'openai'
+  inferenceModel: 'gpt-3.5-turbo', // Groq: 'llama3-70b-8192' or 'llama3-8b-8192'.. OpenAI: 'gpt-4-turbo etc
 
   // Whisper settings
   whisperModelProvider: 'groq', // 'groq' or 'openai'

@@ -18,6 +18,7 @@ import { answerEngine } from './utils/answerEngine';
 import { chatCompletionWithTools } from './utils/chatCompletionWithTools';
 import { initializeRateLimit, checkRateLimit } from './utils/rateLimiting';
 import { generateChainCompletion } from './utils/generateChainCompletion';
+import { use } from 'react';
 
 dotenv.config();
 
@@ -156,6 +157,7 @@ async function action(obj: FormData): Promise<any> {
       const useTTS = formData.get('useTTS') === 'true';
       const useInternet = formData.get('useInternet') === 'true';
       const usePhotos = formData.get('usePhotos') === 'true';
+      const useChainMode = formData.get('useChainMode') === 'true';
 
       if (!(audioBlob instanceof Blob)) throw new Error('No audio detected');
 
@@ -166,6 +168,10 @@ async function action(obj: FormData): Promise<any> {
 
       if (usePhotos) {
         responseText = (await handleImageProcessing(usePhotos, formData, transcription)) || '';
+      }
+
+      if (useChainMode) {
+        responseText = (await handleChainResponseGeneration(transcription, sessionId)) || '';
       }
 
       if (!responseText) {
