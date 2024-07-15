@@ -30,6 +30,7 @@ interface UIComponent {
 const Main = () => {
   const { action } = useActions<typeof AI>();
   const [useChainMode, setUseChainMode] = useState(false);
+  const [useJsonMode, setJsonMode] = useState(false);
   const [useTTS, setUseTTS] = useState(false);
   const [useInternet, setUseInternet] = useState(false);
   const [usePhotos, setUsePhotos] = useState(false);
@@ -58,6 +59,10 @@ const Main = () => {
 
   const handleChainModeToggle = () => {
     setUseChainMode(!useChainMode);
+  };
+
+  const handleJsonModeToggle = () => {
+    setJsonMode(!useJsonMode);
   };
 
   const handleSubmit = async (formData: FormData) => {
@@ -138,6 +143,7 @@ const Main = () => {
               useInternet={useInternet}
               usePhotos={usePhotos}
               useChainMode={useChainMode}
+              useJsonMode={useJsonMode}
             />
           </div>
           <div className="mt-4 flex w-1/2 flex-col items-center px-4">
@@ -196,14 +202,17 @@ const Main = () => {
           useInternet={useInternet}
           usePhotos={usePhotos}
           useChainMode={useChainMode}
+          useJsonMode={useJsonMode}
           onTTSToggle={handleTTSToggle}
           onInternetToggle={handleInternetToggle}
           onPhotosToggle={() => setUsePhotos(!usePhotos)}
           onChainModeToggle={handleChainModeToggle}
+          onJsonModeToggle={handleJsonModeToggle}
           setTTS={setUseTTS}
           setInternet={setUseInternet}
           setPhotos={setUsePhotos}
           setChainMode={setUseChainMode}
+          setJsonMode={setJsonMode}
         />
       )}
       {config.useAttributionComponent && (
@@ -213,6 +222,7 @@ const Main = () => {
           useTTS={useTTS}
           useRateLimiting={config.useRateLimiting}
           useChainMode={useChainMode}
+          useJsonMode={useJsonMode}
         />
       )}
     </div>

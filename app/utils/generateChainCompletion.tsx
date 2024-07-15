@@ -1,11 +1,9 @@
 import { ChatOpenAI } from '@langchain/openai';
-import Groq from 'groq-sdk';
 import { config } from '../config';
 import { traceable } from 'langsmith/traceable';
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
-import { RunnableConfig, RunnableWithMessageHistory } from '@langchain/core/runnables';
+import { Runnable, RunnableWithMessageHistory } from '@langchain/core/runnables';
 import { UpstashRedisChatMessageHistory } from '@langchain/community/stores/message/upstash_redis';
-import { get } from 'http';
 
 const UPSTASH_REDIS_REST_URL = process.env.UPSTASH_REDIS_REST_URL!;
 const UPSTASH_REDIS_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN!;
@@ -45,7 +43,7 @@ function createPrompt() {
 }
 
 // Function to initialize the chain
-function initializeChain(prompt: any) {
+function initializeChain(prompt: ChatPromptTemplate) {
   return prompt.pipe(
     new ChatOpenAI({
       model: config.inferenceModel,
@@ -57,7 +55,7 @@ function initializeChain(prompt: any) {
 
 // Function to handle the chain with history
 function createChainWithHistory(
-  chain: any,
+  chain: Runnable<any, any>,
   sessionId: string,
 ): RunnableWithMessageHistory<any, any> {
   return new RunnableWithMessageHistory({
@@ -76,7 +74,7 @@ function createChainWithHistory(
 }
 
 // Main function to generate chain completion
-async function generateCompletion(transcription: string, sessionId: string): Promise<any> {
+async function generateCompletion(transcription: string, sessionId: string): Promise<string> {
   try {
     const prompt = createPrompt();
     const chain = initializeChain(prompt);
@@ -95,7 +93,7 @@ async function generateCompletion(transcription: string, sessionId: string): Pro
 
 // Exporting the main function with traceability
 export const generateChainCompletion = traceable(
-  async (transcription: string, sessionId: string): Promise<any> => {
+  async (transcription: string, sessionId: string): Promise<string> => {
     if (config.inferenceModelProvider !== 'openai') {
       throw new Error('This functionality is not yet available for the specified provider.');
     }

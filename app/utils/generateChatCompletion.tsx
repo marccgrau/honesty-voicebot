@@ -1,10 +1,8 @@
 import { HumanMessage } from '@langchain/core/messages';
 import { ChatOpenAI } from '@langchain/openai';
-import { ChatGroq } from '@langchain/groq';
 import Groq from 'groq-sdk';
 import { config } from '../config';
 import { traceable } from 'langsmith/traceable';
-import { generateChainCompletion } from './generateChainCompletion';
 
 const groq = new Groq();
 

@@ -8,6 +8,7 @@ interface InputComponentProps {
   useInternet: boolean;
   usePhotos: boolean;
   useChainMode: boolean;
+  useJsonMode: boolean;
 }
 
 const InputComponent: React.FC<InputComponentProps> = ({
@@ -16,6 +17,7 @@ const InputComponent: React.FC<InputComponentProps> = ({
   useInternet,
   usePhotos,
   useChainMode,
+  useJsonMode,
 }) => {
   const [recording, setRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -61,6 +63,7 @@ const InputComponent: React.FC<InputComponentProps> = ({
         formData.append('useInternet', String(useInternet));
         formData.append('usePhotos', String(usePhotos));
         formData.append('useChainMode', String(useChainMode));
+        formData.append('useJsonMode', String(useJsonMode));
 
         const sessionId = localStorage.getItem('sessionId');
         formData.append('sessionId', sessionId!);

@@ -29,7 +29,7 @@
     </a>
 </div>
 
-This project is an AI-powered voice assistant utilizing various AI models and services to provide intelligent responses to user queries. It supports voice input, transcription, text-to-speech, image processing, and function calling with conditionally rendered UI components. This was inspired by the recent trend of AI Devices such as the Humane AI Pin and the Rabbit R1. 
+This project is an AI-powered voice assistant utilizing various AI models and services to provide intelligent responses to user queries. It supports voice input, transcription, text-to-speech, image processing, and function calling with conditionally rendered UI components. This was inspired by the recent trend of AI Devices such as the Humane AI Pin and the Rabbit R1.
 
 ## Features
 
@@ -44,13 +44,15 @@ This project is an AI-powered voice assistant utilizing various AI models and se
 ## Setup
 
 ### 1. Clone the repository
+
 ```bash
 git clone https://github.com/developersdigest/ai-devices.git
 ```
 
 ### 2. Install dependencies
+
 ```bash
-npm install 
+npm install
 # or
 bun install
 ```
@@ -60,11 +62,13 @@ bun install
 To use this AI-powered voice assistant, you need to provide the necessary API keys for the selected AI models and services.
 
 ### Required for core functionality
+
 - **Groq API Key** For Llama + Whisper
 - **OpenAI API Key** for TTS and Vision + Whisper
 - **Serper API Key** for Internet Results
 
 ### Optional for advanced configuration
+
 - **Langchain Tracing** for function execution tracing
 - **Upstash Redis** for IP-based rate limiting
 - **Spotify** for Spotify API interactions
@@ -73,6 +77,7 @@ To use this AI-powered voice assistant, you need to provide the necessary API ke
 Replace 'API_KEY_GOES_HERE' with your actual API keys for each service.
 
 ### 4. Start the development server
+
 ```bash
 npm run dev
 # or
@@ -91,43 +96,43 @@ Modify `app/config.tsx` to adjust settings and configurations for the AI-powered
 
 ```typescript
 export const config = {
-    // Inference settings
-    inferenceModelProvider: 'groq', // 'groq' or 'openai'
-    inferenceModel: 'llama3-8b-8192', // Groq: 'llama3-70b-8192' or 'llama3-8b-8192'.. OpenAI: 'gpt-4-turbo etc
+  // Inference settings
+  inferenceModelProvider: 'groq', // 'groq' or 'openai'
+  inferenceModel: 'llama3-8b-8192', // Groq: 'llama3-70b-8192' or 'llama3-8b-8192'.. OpenAI: 'gpt-4-turbo etc
 
-    // BELOW OPTIONAL are some options for the app to use
-    
-    // Whisper settings
-    whisperModelProvider: 'openai', // 'groq' or 'openai'
-    whisperModel: 'whisper-1', // Groq: 'whisper-large-v3' OpenAI: 'whisper-1'
+  // BELOW OPTIONAL are some options for the app to use
 
-    // TTS settings
-    ttsModelProvider: 'openai', // only openai supported for now...
-    ttsModel: 'tts-1', // only openai supported for now...s
-    ttsvoice: 'alloy', // only openai supported for now... [alloy, echo, fable, onyx, nova, and shimmer]
+  // Whisper settings
+  whisperModelProvider: 'openai', // 'groq' or 'openai'
+  whisperModel: 'whisper-1', // Groq: 'whisper-large-v3' OpenAI: 'whisper-1'
 
-    // OPTIONAL:Vision settings 
-    visionModelProvider: 'google', // 'openai' or 'fal.ai' or 'google'
-    visionModel: 'gemini-1.5-flash-latest', // OpenAI: 'gpt-4o' or  Fal.ai: 'llava-next' or  Google: 'gemini-1.5-flash-latest'
+  // TTS settings
+  ttsModelProvider: 'openai', // only openai supported for now...
+  ttsModel: 'tts-1', // only openai supported for now...s
+  ttsvoice: 'alloy', // only openai supported for now... [alloy, echo, fable, onyx, nova, and shimmer]
 
-    // Function calling + conditionally rendered UI 
-    functionCallingModelProvider: 'openai', // 'openai' current only
-    functionCallingModel: 'gpt-3.5-turbo', // OpenAI: 'gpt-3-5-turbo'
+  // OPTIONAL:Vision settings
+  visionModelProvider: 'google', // 'openai' or 'fal.ai' or 'google'
+  visionModel: 'gemini-1.5-flash-latest', // OpenAI: 'gpt-4o' or  Fal.ai: 'llava-next' or  Google: 'gemini-1.5-flash-latest'
 
-    // UI settings 
-    enableResponseTimes: false, // Display response times for each message
-    enableSettingsUIToggle: true, // Display the settings UI toggle
-    enableTextToSpeechUIToggle: true, // Display the text to speech UI toggle
-    enableInternetResultsUIToggle: true, // Display the internet results UI toggle
-    enableUsePhotUIToggle: true, // Display the use photo UI toggle
-    enabledRabbitMode: true, // Enable the rabbit mode UI toggle
-    enabledLudicrousMode: true, // Enable the ludicrous mode UI toggle
-    useAttributionComponent: true, // Use the attribution component to display the attribution of the AI models/services used
+  // Function calling + conditionally rendered UI
+  functionCallingModelProvider: 'openai', // 'openai' current only
+  functionCallingModel: 'gpt-3.5-turbo', // OpenAI: 'gpt-3-5-turbo'
 
-    // Rate limiting settings
-    useRateLimiting: false, // Use Upstash rate limiting to limit the number of requests per user
+  // UI settings
+  enableResponseTimes: false, // Display response times for each message
+  enableSettingsUIToggle: true, // Display the settings UI toggle
+  enableTextToSpeechUIToggle: true, // Display the text to speech UI toggle
+  enableInternetResultsUIToggle: true, // Display the internet results UI toggle
+  enableUsePhotUIToggle: true, // Display the use photo UI toggle
+  enabledRabbitMode: true, // Enable the rabbit mode UI toggle
+  enabledLudicrousMode: true, // Enable the ludicrous mode UI toggle
+  useAttributionComponent: true, // Use the attribution component to display the attribution of the AI models/services used
 
-    // Tracing with Langchain
-    useLangSmith: true, // Use LangSmith by Langchain to trace the execution of the functions in the config.tsx set to true to use.
+  // Rate limiting settings
+  useRateLimiting: false, // Use Upstash rate limiting to limit the number of requests per user
+
+  // Tracing with Langchain
+  useLangSmith: true, // Use LangSmith by Langchain to trace the execution of the functions in the config.tsx set to true to use.
 };
 ```

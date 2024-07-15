@@ -6,14 +6,17 @@ interface SettingsProps {
   useInternet: boolean;
   usePhotos: boolean;
   useChainMode: boolean;
+  useJsonMode: boolean;
   onTTSToggle: () => void;
   onInternetToggle: () => void;
   onPhotosToggle: () => void;
   onChainModeToggle: () => void;
+  onJsonModeToggle: () => void;
   setTTS: (useTTS: boolean) => void;
   setInternet: (useInternet: boolean) => void;
   setPhotos: (usePhotos: boolean) => void;
   setChainMode: (useChainMode: boolean) => void;
+  setJsonMode: (useJsonMode: boolean) => void;
 }
 
 export const Settings: React.FC<SettingsProps> = ({
@@ -21,14 +24,17 @@ export const Settings: React.FC<SettingsProps> = ({
   useInternet,
   usePhotos,
   useChainMode,
+  useJsonMode,
   onTTSToggle,
   onInternetToggle,
   onPhotosToggle,
   onChainModeToggle,
+  onJsonModeToggle,
   setTTS,
   setInternet,
   setPhotos,
   setChainMode,
+  setJsonMode,
 }) => {
   return (
     <div className="animate-slide-up absolute bottom-24 left-7 rounded-md bg-white p-4 shadow-md">
@@ -131,6 +137,32 @@ export const Settings: React.FC<SettingsProps> = ({
               ></div>
             </div>
             <div className="ml-3 text-sm">Use Chain Mode</div>
+          </label>
+        </div>
+      )}
+      {config.enableJsonModeUIToggle && (
+        <div className="mb-2 flex items-center">
+          <label htmlFor="jsonmode-toggle" className="flex cursor-pointer items-center">
+            <div className="relative">
+              <input
+                type="checkbox"
+                id="jsonmode-toggle"
+                className="sr-only"
+                checked={useJsonMode}
+                onChange={onJsonModeToggle}
+              />
+              <div
+                className={`block h-6 w-10 rounded-full ${
+                  useJsonMode ? 'bg-green-500' : 'bg-gray-300'
+                }`}
+              ></div>
+              <div
+                className={`absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition ${
+                  useJsonMode ? 'translate-x-full transform' : ''
+                }`}
+              ></div>
+            </div>
+            <div className="ml-3 text-sm">Use JSON Mode</div>
           </label>
         </div>
       )}

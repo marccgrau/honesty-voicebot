@@ -1,7 +1,12 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 export const config = {
   // Inference settings
   inferenceModelProvider: 'openai', // 'groq' or 'openai'
   inferenceModel: 'gpt-3.5-turbo', // Groq: 'llama3-70b-8192' or 'llama3-8b-8192'.. OpenAI: 'gpt-4-turbo etc
+  jsonValidationModel: 'gpt-4o',
 
   // Whisper settings
   whisperModelProvider: 'groq', // 'groq' or 'openai'
@@ -27,6 +32,7 @@ export const config = {
   enableInternetResultsUIToggle: true, // Display the internet results UI toggle
   enableUsePhotUIToggle: false, // Display the use photo UI toggle
   enableChainModeUIToggle: true, // Display the chain mode UI toggle
+  enableJsonModeUIToggle: true, // Display the json mode UI toggle
   useAttributionComponent: true, // Use the attribution component to display the attribution of the AI models/services used
 
   // Rate limiting settings
@@ -40,4 +46,9 @@ export const config = {
 
   // Max tokens
   maxTokens: 2048,
+
+  // MongoDB settings
+  mongoUri: process.env.MONGODB_URI!,
+  dbName: process.env.MONGODB_DBNAME!,
+  collectionName: process.env.MONGODB_COLLECTION!,
 };
