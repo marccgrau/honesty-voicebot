@@ -41,88 +41,38 @@ const initialResponses: Responses = {
   stressFrequency: '',
 };
 
-const CONVERSATION_SYSTEM_MESSAGE = `You are a helpful assistant conducting an interview to collect information for calculating a health insurance premium. 
+const CONVERSATION_SYSTEM_MESSAGE = `You are a polite interviewer conducting an interview to collect information for calculating a health insurance premium.
 Ensure all required questions are answered thoroughly.
 You will get a description of the required information, the conversation history, and a JSON file with the responses given so far.
 If an answer is missing, the value will be N/A, an empty string, or null.`;
 
-const CONVERSATION_AI_INSTRUCTIONS = `To calculate the health insurance premium, the following information needs to be provided:
+const CONVERSATION_AI_INSTRUCTIONS = `To calculate the health insurance premium, the following information needs to be provided. The information is represented as a question to receive the information and the key to store the response in the JSON file:
 
 1. How often do you eat fruits and vegetables? (fruitsVegetables)
-   - Daily
-   - 3-5 times a week
-   - 1-2 times a week
-   - Rarely
-   - Never
 2. How often do you consume fast food or junk food? (fastFood)
-   - Daily
-   - 3-5 times a week
-   - 1-2 times a week
-   - Rarely
-   - Never
 3. How many glasses of water do you drink per day? (waterIntake)
-   - 8 or more
-   - 5-7
-   - 3-4
-   - 1-2
-   - None
 4. How often do you drink sugary beverages? (sugaryBeverages)
-   - Daily
-   - 3-5 times a week
-   - 1-2 times a week
-   - Rarely
-   - Never
 5. How often do you consume alcohol? (alcohol)
-   - Daily
-   - 3-5 times a week
-   - 1-2 times a week
-   - Rarely
-   - Never
 6. How many days per week do you exercise? (exerciseDays)
-   - 7 days
-   - 5-6 days
-   - 3-4 days
-   - 1-2 days
-   - None
-7. What type of exercise do you usually perform? (exerciseType)
-   - Cardio (running, cycling, etc.)
-   - Strength training (weightlifting, resistance exercises, etc.)
-   - Flexibility exercises (yoga, stretching, etc.)
-   - Sports (basketball, football, etc.)
-   - Other
-8. On average, how long is each exercise session? (exerciseDuration)
-   - Less than 30 minutes
-   - 30-60 minutes
-   - 1-2 hours
-   - More than 2 hours
-9. How often do you engage in physical activities such as walking or cycling for commuting? (physicalActivities)
-   - Daily
-   - 3-5 times a week
-   - 1-2 times a week
-   - Rarely
-   - Never
-10. How many hours of sleep do you get on average per night? (sleepHours)
-   - Less than 4 hours
-   - 4-6 hours
-   - 6-8 hours
-   - More than 8 hours
-11. How often do you feel stressed? (stressFrequency)
-   - Always
-   - Often
-   - Sometimes
-   - Rarely
-   - Never
+7. On average, how long is each exercise session? (exerciseDuration)
+8. How often do you engage in physical activities such as walking or cycling for commuting? (physicalActivities)
+9. How many hours of sleep do you get on average per night? (sleepHours)
+10. How often do you feel stressed? (stressFrequency)
 
-This information is currently available in the JSON file:
+The following information is currently available in the JSON file:
 {responses}
 
 Check the conversation history for any unanswered questions and ensure completeness. Empty fields are either N/A, empty strings or null values.
 
-Iteratively go through the responses and ask the first question where no answer is recorded. If any information is missing or incomplete, kindly ask the user to provide the necessary details.
+Go through the responses step by step and ask the first question where no answer is recorded. If any information is missing or incomplete, kindly ask the user to provide the necessary details.
+
+If a question key already contains a response, do not ask the question again.
 
 If the user attempts to divert from the interview topic, politely steer the conversation back to the interview to gather the required information. Ignore queries unrelated to the health insurance premium calculation.
 
-As soon as all responses are filled in the JSON file, end the conversation by thanking the user for their participation and time.`;
+Always ask the questions in a conversational manner without numbers or mentioning the corresponding keys.
+
+If all responses are answered in the JSON file, end the conversation by thanking the user for their participation and time.`;
 
 // Function to create the prompt
 function createConversationPrompt() {
@@ -183,13 +133,13 @@ This is an exemplary JSON structure where the values are the descriptions of the
 `;
 
 const JSON_AI_INSTRUCTIONS = `
-This is the conversation history:
+Following is the conversation history:
 {history}
 
-This is the most recent answer to fill the JSON with:
+Following is the most recent answer to fill the JSON with:
 {input}
 
-This is the current JSON file with the available information:
+Following is the current JSON file with the available information:
 {responses}.
 
 Go through the complete conversation history and fill in the JSON structure with all available information. Ensure the JSON is complete and accurate. Only return the JSON structure once all the information is filled in.
@@ -277,7 +227,7 @@ async function generateCompletion(transcription: string, sessionId: string): Pro
     );
     console.log('Completion:', completion);
 
-    responses = completion.json.lc_kwargs.content || initialResponses;
+    responses = completion.json?.lc_kwargs?.content || initialResponses;
 
     // Save updated responses to MongoDB
     saveJson(sessionId, responses);

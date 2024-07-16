@@ -30,8 +30,8 @@ interface UIComponent {
 
 const Main = () => {
   const { action } = useActions<typeof AI>();
-  const [useChainMode, setUseChainMode] = useState(false);
-  const [useJsonMode, setJsonMode] = useState(false);
+  const [useChainMode, setUseChainMode] = useState(true);
+  const [useJsonMode, setJsonMode] = useState(true);
   const [useTTS, setUseTTS] = useState(false);
   const [useInternet, setUseInternet] = useState(false);
   const [usePhotos, setUsePhotos] = useState(false);
