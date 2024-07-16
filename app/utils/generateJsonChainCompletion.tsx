@@ -169,7 +169,6 @@ const JSON_SYSTEM_MESSAGE = `
 You are an expert at analyzing conversation histories.
 Your task is to analyze a conversation between a user and an AI assistant and fill in the JSON structure with all available information. Ensure the JSON structure is complete and accurate.
 This is an exemplary JSON structure where the values are the descriptions of the keys:
-{
   "fruitsVegetables": "Frequency of eating fruits and vegetables",
   "fastFood": "Frequency of consuming fast food or junk food",
   "waterIntake": "Daily water intake (litres)",
@@ -181,7 +180,6 @@ This is an exemplary JSON structure where the values are the descriptions of the
   "physicalActivities": "Frequency of physical activities like walking or cycling for commuting",
   "sleepHours": "Average hours of sleep per night",
   "stressFrequency": "Frequency of feeling stressed"
-}
 `;
 
 const JSON_AI_INSTRUCTIONS = `
@@ -282,7 +280,10 @@ async function generateCompletion(transcription: string, sessionId: string): Pro
     responses = completion.json.lc_kwargs.content || initialResponses;
 
     // Save updated responses to MongoDB
-    await saveJson(sessionId, responses);
+    saveJson(sessionId, responses);
+
+    // TODO: format the responses for display
+    // TODO: make sure to only ask questions
 
     return completion.conversation?.lc_kwargs?.content || 'No information available.';
   } catch (error) {
