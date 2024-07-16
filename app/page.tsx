@@ -138,16 +138,16 @@ const Main = () => {
       ) : (
         <div className="flex flex-1">
           <div className="flex w-1/2 flex-col items-center justify-center p-4">
-          <div className="flex flex-col items-center justify-center space-y-12">
-            <DescriptionCard />
-            <InputComponent
-              onSubmit={handleSubmit}
-              useTTS={useTTS}
-              useInternet={useInternet}
-              usePhotos={usePhotos}
-              useChainMode={useChainMode}
-              useJsonMode={useJsonMode}
-            />
+            <div className="flex flex-col items-center justify-center space-y-12">
+              <DescriptionCard />
+              <InputComponent
+                onSubmit={handleSubmit}
+                useTTS={useTTS}
+                useInternet={useInternet}
+                usePhotos={usePhotos}
+                useChainMode={useChainMode}
+                useJsonMode={useJsonMode}
+              />
             </div>
           </div>
           <div className="mt-4 flex w-1/2 flex-col items-center px-4">
