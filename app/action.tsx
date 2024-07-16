@@ -182,7 +182,7 @@ async function action(obj: FormData): Promise<any> {
         responseText = (await handleResponseGeneration(useInternet, transcription)) || '';
       }
 
-      responseText = await handleToolsResponse(responseText, streamable);
+      //responseText = await handleToolsResponse(responseText, streamable);
 
       streamable.update({ result: responseText });
       if (useTTS) {

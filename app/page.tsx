@@ -6,6 +6,7 @@ import { Settings } from './components/Settings';
 import { AttributionComponent } from './components/AttributionComponent';
 import { MobileNotSupported } from './components/Mobile';
 import InputComponent from './components/InputComponent';
+import DescriptionCard from './components/DescriptionCard';
 import { WeatherData } from './components/tools/Weather';
 import { SpotifyTrack } from './components/tools/Spotify';
 import { ClockComponent } from './components/tools/Clock';
@@ -136,7 +137,9 @@ const Main = () => {
         <MobileNotSupported />
       ) : (
         <div className="flex flex-1">
-          <div className="flex w-1/2 items-center justify-center">
+          <div className="flex w-1/2 flex-col items-center justify-center p-4">
+          <div className="flex flex-col items-center justify-center space-y-12">
+            <DescriptionCard />
             <InputComponent
               onSubmit={handleSubmit}
               useTTS={useTTS}
@@ -145,6 +148,7 @@ const Main = () => {
               useChainMode={useChainMode}
               useJsonMode={useJsonMode}
             />
+            </div>
           </div>
           <div className="mt-4 flex w-1/2 flex-col items-center px-4">
             <div className="w-full max-w-[700px]">

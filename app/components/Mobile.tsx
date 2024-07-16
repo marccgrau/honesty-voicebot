@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import logo from '../../public/unisg_logo.png';
 
 export const MobileNotSupported: React.FC = () => {
   return (
@@ -9,7 +10,7 @@ export const MobileNotSupported: React.FC = () => {
       </div>
       <div className="mt-8">
         <a href="https://unisg.ch" target="_blank" rel="noreferrer">
-          <Image src="../../public/unisg-logo.png" alt="UNISG Logo" width={256} height={256} />
+          <Image src={logo} alt="UNISG Logo" width={128} height={128} />
         </a>
       </div>
     </div>
