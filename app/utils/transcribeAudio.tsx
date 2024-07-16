@@ -25,7 +25,7 @@ export const transcribeAudio = traceable(
       return transcription.text;
     } catch (error) {
       console.error('Error transcribing audio:', error);
-      return 'Error transcribing audio. Please try again later.';
+      return 'Error transcribing audio. Please try again.';
     }
   },
   { name: 'transcribeAudio' },
