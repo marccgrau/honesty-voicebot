@@ -5,6 +5,8 @@ import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts
 import { RunnableWithMessageHistory, RunnableMap } from '@langchain/core/runnables';
 import { UpstashRedisChatMessageHistory } from '@langchain/community/stores/message/upstash_redis';
 import { saveJson, getJson } from './mongoUtil';
+import { filterMessages, AIMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
+import { RunnablePassthrough, RunnableSequence } from '@langchain/core/runnables';
 
 const UPSTASH_REDIS_REST_URL = process.env.UPSTASH_REDIS_REST_URL!;
 const UPSTASH_REDIS_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN!;
@@ -52,15 +54,15 @@ const CONVERSATION_AI_INSTRUCTIONS = `
 **Requirements:**
 To calculate the health insurance premium, please gather the following information:
 
-1. How often do you eat fruits and vegetables?
-2. How often do you consume fast food or junk food?
-3. How many glasses of water do you drink per day?
-4. How often do you drink sugary beverages?
-5. How often do you consume alcohol?
-6. How many days per week do you exercise?
-7. On average, how long is each exercise session?
-8. How many hours of sleep do you get on average per night?
-9. How often do you feel stressed?
+- How often do you eat fruits and vegetables per week?
+- How often do you consume fast food or junk food per week?
+- How many glasses of water do you drink per day?
+- How many glasses of sugary beverages do you drink per day?
+- How often do you consume alcohol per week?
+- How many days per week do you exercise?
+- On average, how long is each exercise session?
+- How many hours of sleep do you get on average per night?
+- How often do you feel stressed per week?
 
 **Available Information:**
 The following responses are currently available:
@@ -130,15 +132,15 @@ You are an expert at analyzing conversation histories.
 Your task is to analyze a conversation between a user and an AI assistant and fill in the JSON structure with all available information. Ensure the JSON structure is complete and accurate.
 
 **Exemplary JSON Structure:**
-  "fruitsVegetables": "Frequency of eating fruits and vegetables",
-  "fastFood": "Frequency of consuming fast food or junk food",
-  "waterIntake": "Daily water intake (litres)",
-  "sugaryBeverages": "Frequency of drinking sugary beverages",
-  "alcohol": "Frequency of alcohol consumption",
+  "fruitsVegetables": "Weekly frequency of eating fruits and vegetables",
+  "fastFood": "Weekly frequency of consuming fast food or junk food",
+  "waterIntake": "Daily water intake (glasses)",
+  "sugaryBeverages": "Daily intake sugary beverages (glasses)",
+  "alcohol": "Weekly frequency of alcohol consumption",
   "exerciseDays": "Days per week of exercise",
   "exerciseDuration": "Average duration of each exercise session",
   "sleepHours": "Average hours of sleep per night",
-  "stressFrequency": "Frequency of feeling stressed"
+  "stressFrequency": "Weekly frequency of feeling stressed"
 `;
 
 const JSON_AI_INSTRUCTIONS = `
@@ -216,6 +218,8 @@ function fetchParallelRunnableConvoAndJsonFill(
   });
   return finalChain;
 }
+
+// TODO: add message history filtering
 
 // Main function to generate chain completion
 async function generateCompletion(transcription: string, sessionId: string): Promise<any> {
