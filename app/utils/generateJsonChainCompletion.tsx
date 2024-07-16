@@ -59,19 +59,18 @@ To calculate the health insurance premium, please gather the following informati
 5. How often do you consume alcohol?
 6. How many days per week do you exercise?
 7. On average, how long is each exercise session?
-8. How often do you engage in physical activities such as walking or cycling for commuting?
-9. How many hours of sleep do you get on average per night?
-10. How often do you feel stressed?
+8. How many hours of sleep do you get on average per night?
+9. How often do you feel stressed?
 
 **Available Information:**
-The following information is currently available:
+The following responses are currently available:
 {responses}
 
 This is the current user input:
 {input}
 
 **Interview Process:**
-1. Review the conversation history for any unanswered questions and ensure completeness. Empty fields are marked as 'N/A', empty strings, or null values.
+1. Review the responses for any unanswered questions and ensure completeness. Empty fields are marked as 'N/A', empty strings, or null values.
 2. Ask the next question where no answer is recorded. If any information is missing or incomplete, kindly ask the user to provide the necessary details.
 3. Do not repeat questions that already have responses.
 
@@ -137,9 +136,7 @@ Your task is to analyze a conversation between a user and an AI assistant and fi
   "sugaryBeverages": "Frequency of drinking sugary beverages",
   "alcohol": "Frequency of alcohol consumption",
   "exerciseDays": "Days per week of exercise",
-  "exerciseType": "Type of exercise usually performed",
   "exerciseDuration": "Average duration of each exercise session",
-  "physicalActivities": "Frequency of physical activities like walking or cycling for commuting",
   "sleepHours": "Average hours of sleep per night",
   "stressFrequency": "Frequency of feeling stressed"
 `;
@@ -226,7 +223,7 @@ async function generateCompletion(transcription: string, sessionId: string): Pro
     // Load existing responses from MongoDB
     let responses: Responses = ((await getJson(sessionId)) as Responses) || initialResponses;
 
-    console.log('Responses:', responses);
+    console.debug('Responses:', responses);
 
     const conversationPrompt = createConversationPrompt();
     const conversationChain = initializeConversationChain(conversationPrompt);
@@ -241,15 +238,12 @@ async function generateCompletion(transcription: string, sessionId: string): Pro
       { input: transcription, responses: responses },
       { configurable: { sessionId } },
     );
-    console.log('Completion:', completion);
+    console.debug('Completion:', completion);
 
     responses = completion.json?.lc_kwargs?.content || initialResponses;
 
     // Save updated responses to MongoDB
     saveJson(sessionId, responses);
-
-    // TODO: format the responses for display
-    // TODO: make sure to only ask questions
 
     return completion.conversation?.lc_kwargs?.content || 'No information available.';
   } catch (error) {

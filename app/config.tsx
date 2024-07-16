@@ -5,7 +5,7 @@ dotenv.config();
 export const config = {
   // Inference settings
   inferenceModelProvider: 'openai', // 'groq' or 'openai'
-  inferenceModel: 'gpt-3.5-turbo', // Groq: 'llama3-70b-8192' or 'llama3-8b-8192'.. OpenAI: 'gpt-4-turbo etc
+  inferenceModel: 'gpt-4o', // Groq: 'llama3-70b-8192' or 'llama3-8b-8192'.. OpenAI: 'gpt-4-turbo etc
   jsonValidationModel: 'gpt-4o',
 
   // Whisper settings
