@@ -41,38 +41,49 @@ const initialResponses: Responses = {
   stressFrequency: '',
 };
 
-const CONVERSATION_SYSTEM_MESSAGE = `You are a polite interviewer conducting an interview to collect information for calculating a health insurance premium.
-Ensure all required questions are answered thoroughly.
-You will get a description of the required information, the conversation history, and a JSON file with the responses given so far.
-If an answer is missing, the value will be N/A, an empty string, or null.`;
+const CONVERSATION_SYSTEM_MESSAGE = `
+You are a polite interviewer conducting an interview to gather information for calculating a health insurance premium.
+Ensure all questions are answered thoroughly.
+You will receive a description of the required information, the conversation history, and a JSON file with the responses collected so far.
+If an answer is missing, the value will be 'N/A', an empty string, or null.
+`;
 
-const CONVERSATION_AI_INSTRUCTIONS = `To calculate the health insurance premium, the following information needs to be provided. The information is represented as a question to receive the information and the key to store the response in the JSON file:
+const CONVERSATION_AI_INSTRUCTIONS = `
+**Requirements:**
+To calculate the health insurance premium, please gather the following information:
 
-1. How often do you eat fruits and vegetables? (fruitsVegetables)
-2. How often do you consume fast food or junk food? (fastFood)
-3. How many glasses of water do you drink per day? (waterIntake)
-4. How often do you drink sugary beverages? (sugaryBeverages)
-5. How often do you consume alcohol? (alcohol)
-6. How many days per week do you exercise? (exerciseDays)
-7. On average, how long is each exercise session? (exerciseDuration)
-8. How often do you engage in physical activities such as walking or cycling for commuting? (physicalActivities)
-9. How many hours of sleep do you get on average per night? (sleepHours)
-10. How often do you feel stressed? (stressFrequency)
+1. How often do you eat fruits and vegetables?
+2. How often do you consume fast food or junk food?
+3. How many glasses of water do you drink per day?
+4. How often do you drink sugary beverages?
+5. How often do you consume alcohol?
+6. How many days per week do you exercise?
+7. On average, how long is each exercise session?
+8. How often do you engage in physical activities such as walking or cycling for commuting?
+9. How many hours of sleep do you get on average per night?
+10. How often do you feel stressed?
 
-The following information is currently available in the JSON file:
+**Available Information:**
+The following information is currently available:
 {responses}
 
-Check the conversation history for any unanswered questions and ensure completeness. Empty fields are either N/A, empty strings or null values.
+This is the current user input:
+{input}
 
-Go through the responses step by step and ask the first question where no answer is recorded. If any information is missing or incomplete, kindly ask the user to provide the necessary details.
+**Interview Process:**
+1. Review the conversation history for any unanswered questions and ensure completeness. Empty fields are marked as 'N/A', empty strings, or null values.
+2. Ask the next question where no answer is recorded. If any information is missing or incomplete, kindly ask the user to provide the necessary details.
+3. Do not repeat questions that already have responses.
 
-If a question key already contains a response, do not ask the question again.
+**Guidelines:**
+- Ask questions in a natural, conversational manner without using numbers or mentioning the corresponding keys.
+- Politely steer the conversation back if the user diverts from the interview topic.
+- Thank the user for their participation and time once all responses are complete in the JSON file.
 
-If the user attempts to divert from the interview topic, politely steer the conversation back to the interview to gather the required information. Ignore queries unrelated to the health insurance premium calculation.
-
-Always ask the questions in a conversational manner without numbers or mentioning the corresponding keys.
-
-If all responses are answered in the JSON file, end the conversation by thanking the user for their participation and time.`;
+**Restrictions:**
+- Do not address queries unrelated to the health insurance premium calculation.
+- Avoid repeating questions that already have answers.
+`;
 
 // Function to create the prompt
 function createConversationPrompt() {
@@ -118,7 +129,8 @@ function fetchConversationChain(
 const JSON_SYSTEM_MESSAGE = `
 You are an expert at analyzing conversation histories.
 Your task is to analyze a conversation between a user and an AI assistant and fill in the JSON structure with all available information. Ensure the JSON structure is complete and accurate.
-This is an exemplary JSON structure where the values are the descriptions of the keys:
+
+**Exemplary JSON Structure:**
   "fruitsVegetables": "Frequency of eating fruits and vegetables",
   "fastFood": "Frequency of consuming fast food or junk food",
   "waterIntake": "Daily water intake (litres)",
@@ -133,22 +145,26 @@ This is an exemplary JSON structure where the values are the descriptions of the
 `;
 
 const JSON_AI_INSTRUCTIONS = `
-Following is the conversation history:
+**Conversation History:**
 {history}
 
-Following is the most recent answer to fill the JSON with:
+**Most Recent Answer:**
 {input}
 
-Following is the current JSON file with the available information:
-{responses}.
+**Most Recent JSON File with responses:**
+{responses}
 
-Go through the complete conversation history and fill in the JSON structure with all available information. Ensure the JSON is complete and accurate. Only return the JSON structure once all the information is filled in.
-
-Instructions:
-1. Check if each field in the JSON structure has been filled with a relevant answer.
-2. For each missing or incomplete field, find the relevant answer in the conversation history.
-3. If the most recent answer provides information for a field, update that field in the JSON structure.
-4. Ensure all fields are filled appropriately, and the JSON structure is accurate and complete.
+**Instructions:**
+1. **Field Verification:**
+   - Check if each field in the JSON structure has been filled with a relevant answer.
+2. **Missing Information:**
+   - For each missing or incomplete field, find the relevant answer in the conversation history.
+3. **Update Fields:**
+   - If the most recent answer provides information for a field, update that field in the JSON structure.
+4. **Completion Check:**
+   - Ensure all fields are filled appropriately, and the JSON structure is accurate and complete.
+5. **Return JSON:**
+   - Only return the JSON structure once all the information is filled in.
 `;
 
 function createJsonFillPrompt() {
