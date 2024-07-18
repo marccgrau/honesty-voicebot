@@ -206,10 +206,8 @@ const JSON_AI_INSTRUCTIONS = `
 **Instructions:**
 1. **Field Verification:**
    - Check if each field in the JSON structure has been filled with a relevant answer.
-2. **Missing Information:**
-   - For each missing or incomplete field, find the relevant answer in the conversation history.
-3. **Update Fields:**
-   - If the most recent answer provides information for a field, update that field in the JSON structure.
+2. **Update Information:**
+   - For each missing, incomplete or unanswered field, scan through the conversation history and current answer to find an answer if possible.
 4. **Measurability:**
    - Make sure to extract measurable information for each field.
 5. **Completion Check:**
