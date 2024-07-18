@@ -16,6 +16,8 @@ import { chatCompletionWithTools } from './utils/chatCompletionWithTools';
 import { initializeRateLimit, checkRateLimit } from './utils/rateLimiting';
 import { generateChainCompletion } from './utils/generateChainCompletion';
 import { generateJsonChainCompletion } from './utils/generateJsonChainCompletion';
+import { generateAgentCompletion } from './utils/generateAgentCompletion';
+import { use } from 'react';
 
 dotenv.config();
 
@@ -138,6 +140,16 @@ async function handleJsonChainResponseGeneration(responseText: string, sessionId
   }
 }
 
+async function handleAgentResponseGeneration(responseText: string, sessionId: string) {
+  try {
+    const completion = await generateAgentCompletion(responseText, sessionId);
+    return completion;
+  } catch (error) {
+    console.error('Error in agent response generation:', error);
+    throw error;
+  }
+}
+
 async function action(obj: FormData): Promise<any> {
   'use server';
   const streamable = createStreamableValue();
@@ -158,6 +170,7 @@ async function action(obj: FormData): Promise<any> {
       const usePhotos = formData.get('usePhotos') === 'true';
       const useChainMode = formData.get('useChainMode') === 'true';
       const useJsonMode = formData.get('useJsonMode') === 'true';
+      const useAgentMode = formData.get('useAgentMode') === 'true';
 
       if (!(audioBlob instanceof Blob)) throw new Error('No audio detected');
 
@@ -168,6 +181,9 @@ async function action(obj: FormData): Promise<any> {
 
       if (usePhotos) {
         responseText = (await handleImageProcessing(usePhotos, formData, transcription)) || '';
+      }
+      if (useAgentMode) {
+        responseText = (await handleAgentResponseGeneration(transcription, sessionId)) || '';
       }
 
       if (useChainMode && useJsonMode) {

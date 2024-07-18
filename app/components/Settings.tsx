@@ -7,16 +7,19 @@ interface SettingsProps {
   usePhotos: boolean;
   useChainMode: boolean;
   useJsonMode: boolean;
+  useAgentMode: boolean;
   onTTSToggle: () => void;
   onInternetToggle: () => void;
   onPhotosToggle: () => void;
   onChainModeToggle: () => void;
   onJsonModeToggle: () => void;
+  onAgentModeToggle: () => void;
   setTTS: (useTTS: boolean) => void;
   setInternet: (useInternet: boolean) => void;
   setPhotos: (usePhotos: boolean) => void;
   setChainMode: (useChainMode: boolean) => void;
   setJsonMode: (useJsonMode: boolean) => void;
+  setAgentMode: (useAgentMode: boolean) => void;
 }
 
 export const Settings: React.FC<SettingsProps> = ({
@@ -25,16 +28,19 @@ export const Settings: React.FC<SettingsProps> = ({
   usePhotos,
   useChainMode,
   useJsonMode,
+  useAgentMode,
   onTTSToggle,
   onInternetToggle,
   onPhotosToggle,
   onChainModeToggle,
   onJsonModeToggle,
+  onAgentModeToggle,
   setTTS,
   setInternet,
   setPhotos,
   setChainMode,
   setJsonMode,
+  setAgentMode,
 }) => {
   return (
     <div className="animate-slide-up absolute bottom-24 left-7 rounded-md bg-white p-4 shadow-md">
@@ -163,6 +169,32 @@ export const Settings: React.FC<SettingsProps> = ({
               ></div>
             </div>
             <div className="ml-3 text-sm">Use JSON Mode</div>
+          </label>
+        </div>
+      )}
+      {config.enableAgentModeUIToggle && (
+        <div className="mb-2 flex items-center">
+          <label htmlFor="agentmode-toggle" className="flex cursor-pointer items-center">
+            <div className="relative">
+              <input
+                type="checkbox"
+                id="agentmode-toggle"
+                className="sr-only"
+                checked={useAgentMode}
+                onChange={onAgentModeToggle}
+              />
+              <div
+                className={`block h-6 w-10 rounded-full ${
+                  useAgentMode ? 'bg-green-500' : 'bg-gray-300'
+                }`}
+              ></div>
+              <div
+                className={`absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition ${
+                  useAgentMode ? 'translate-x-full transform' : ''
+                }`}
+              ></div>
+            </div>
+            <div className="ml-3 text-sm">Use Agent Mode</div>
           </label>
         </div>
       )}

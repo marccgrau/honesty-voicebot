@@ -9,6 +9,7 @@ interface InputComponentProps {
   usePhotos: boolean;
   useChainMode: boolean;
   useJsonMode: boolean;
+  useAgentMode: boolean;
 }
 
 const InputComponent: React.FC<InputComponentProps> = ({
@@ -18,6 +19,7 @@ const InputComponent: React.FC<InputComponentProps> = ({
   usePhotos,
   useChainMode,
   useJsonMode,
+  useAgentMode,
 }) => {
   const [recording, setRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -64,6 +66,7 @@ const InputComponent: React.FC<InputComponentProps> = ({
         formData.append('usePhotos', String(usePhotos));
         formData.append('useChainMode', String(useChainMode));
         formData.append('useJsonMode', String(useJsonMode));
+        formData.append('useAgentMode', String(useAgentMode));
 
         const sessionId = localStorage.getItem('sessionId');
         formData.append('sessionId', sessionId!);

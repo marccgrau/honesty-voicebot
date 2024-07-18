@@ -8,6 +8,7 @@ interface AttributionComponentProps {
   useRateLimiting: boolean;
   useChainMode: boolean;
   useJsonMode: boolean;
+  useAgentMode: boolean;
 }
 
 export const AttributionComponent: React.FC<AttributionComponentProps> = ({
@@ -17,6 +18,7 @@ export const AttributionComponent: React.FC<AttributionComponentProps> = ({
   useRateLimiting,
   useChainMode,
   useJsonMode,
+  useAgentMode,
 }) => {
   const {
     whisperModelProvider,
@@ -41,6 +43,7 @@ export const AttributionComponent: React.FC<AttributionComponentProps> = ({
       {useRateLimiting && ', rate limiting: upstash redis'}
       {useChainMode && ', chain mode: enabled'}
       {useJsonMode && `, json mode: enabled, json model: ${jsonValidationModel}`}
+      {useAgentMode && ', agent mode: enabled'}
     </div>
   );
 };
