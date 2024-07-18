@@ -32,6 +32,7 @@ const Main = () => {
   const { action } = useActions<typeof AI>();
   const [useChainMode, setUseChainMode] = useState(true);
   const [useJsonMode, setJsonMode] = useState(true);
+  const [useAgentMode, setUseAgentMode] = useState(false);
   const [useTTS, setUseTTS] = useState(false);
   const [useInternet, setUseInternet] = useState(false);
   const [usePhotos, setUsePhotos] = useState(false);
@@ -64,6 +65,10 @@ const Main = () => {
 
   const handleJsonModeToggle = () => {
     setJsonMode(!useJsonMode);
+  };
+
+  const handleAgentModeToggle = () => {
+    setUseAgentMode(!useAgentMode);
   };
 
   const handleSubmit = async (formData: FormData) => {
@@ -147,6 +152,7 @@ const Main = () => {
                 usePhotos={usePhotos}
                 useChainMode={useChainMode}
                 useJsonMode={useJsonMode}
+                useAgentMode={useAgentMode}
               />
             </div>
           </div>
@@ -207,16 +213,19 @@ const Main = () => {
           usePhotos={usePhotos}
           useChainMode={useChainMode}
           useJsonMode={useJsonMode}
+          useAgentMode={useAgentMode}
           onTTSToggle={handleTTSToggle}
           onInternetToggle={handleInternetToggle}
           onPhotosToggle={() => setUsePhotos(!usePhotos)}
           onChainModeToggle={handleChainModeToggle}
           onJsonModeToggle={handleJsonModeToggle}
+          onAgentModeToggle={handleAgentModeToggle}
           setTTS={setUseTTS}
           setInternet={setUseInternet}
           setPhotos={setUsePhotos}
           setChainMode={setUseChainMode}
           setJsonMode={setJsonMode}
+          setAgentMode={setUseAgentMode}
         />
       )}
       {config.useAttributionComponent && (
@@ -227,6 +236,7 @@ const Main = () => {
           useRateLimiting={config.useRateLimiting}
           useChainMode={useChainMode}
           useJsonMode={useJsonMode}
+          useAgentMode={useAgentMode}
         />
       )}
     </div>

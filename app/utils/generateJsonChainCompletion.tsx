@@ -20,9 +20,7 @@ interface Responses {
   sugaryBeverages: string;
   alcohol: string;
   exerciseDays: string;
-  exerciseType: string;
   exerciseDuration: string;
-  physicalActivities: string;
   sleepHours: string;
   stressFrequency: string;
 }
@@ -34,56 +32,65 @@ const initialResponses: Responses = {
   sugaryBeverages: '',
   alcohol: '',
   exerciseDays: '',
-  exerciseType: '',
   exerciseDuration: '',
-  physicalActivities: '',
   sleepHours: '',
   stressFrequency: '',
 };
 
+interface Question {
+  key: keyof Responses;
+  question: string;
+}
+
 const CONVERSATION_SYSTEM_MESSAGE = `
 You are a polite interviewer conducting an interview to gather information for calculating a health insurance premium.
 Ensure all questions are answered thoroughly and one by one.
-You will receive a description of the required information, a JSON file with the responses collected so far, and the current user input.
-If an answer is missing, the value will be 'N/A', an empty string, or null.
+You will receive a question to ask the user. After the user responds, you will receive the next question to ask.
 `;
 
 const CONVERSATION_AI_INSTRUCTIONS = `
-**Requirements:**
-To calculate the health insurance premium, please gather the following information:
+Assess if the user's response is relevant to the question asked.
+If the response is relevant, proceed with the next question as stated below.
+{question}
 
-- How often do you eat fruits and vegetables per week?
-- How often do you consume fast food or junk food per week?
-- How many glasses of water do you drink per day?
-- How many glasses of sugary beverages do you drink per day?
-- How often do you consume alcohol per week?
-- How many days per week do you exercise?
-- On average, how long is each exercise session?
-- How many hours of sleep do you get on average per night?
-- How often do you feel stressed per week?
+If above "All questions have been answered." is returned, the interview is complete.
+Only if the interview is complete thank the user for his time and end the conversation.
 
-**Available Information:**
-The following responses are currently already available:
-{responses}
-
-This is the current user input:
-{input}
-
-**Interview Process:**
-- Review the responses for any unanswered questions and ensure completeness. Empty fields are marked as 'N/A', empty strings, or null values.
-- Ask the next question where no answer is recorded. If any information is missing or incomplete, kindly ask the user to provide the necessary details.
-- Do not repeat questions that already have responses.
-- Only ask one question at a time.
-
-**Guidelines:**
-- Ask questions in a natural, conversational manner.
-- Politely steer the conversation back if the user diverts from the interview topic.
-- Thank the user for their participation and time once all responses are complete in the JSON file. Tell them to go back to prolific.
-
-**Restrictions:**
-- Do not address queries unrelated to the health insurance premium calculation.
-- Avoid repeating questions that already have answers.
+**Instructions:**
+- Ask the user the question provided, if there are any open questions.
+- Talk in a polite and professional manner.
 `;
+
+// List of questions to be asked during the interview
+const questions: Question[] = [
+  { key: 'fruitsVegetables', question: 'How often do you eat fruits and vegetables?' },
+  { key: 'fastFood', question: 'How often do you consume fast food or junk food?' },
+  { key: 'waterIntake', question: 'How many glasses of water do you drink per day?' },
+  { key: 'sugaryBeverages', question: 'How often do you drink sugary beverages?' },
+  { key: 'alcohol', question: 'How often do you consume alcohol?' },
+  { key: 'exerciseDays', question: 'How many days per week do you exercise?' },
+  { key: 'exerciseDuration', question: 'On average, how long is each exercise session?' },
+  { key: 'sleepHours', question: 'How many hours of sleep do you get on average per night?' },
+  { key: 'stressFrequency', question: 'How often do you feel stressed?' },
+];
+
+// Function to get all unanswered questions
+function getUnansweredQuestions(responses: Responses) {
+  return questions.filter((q) => {
+    const response = responses[q.key];
+    return !response || response === 'N/A';
+  });
+}
+
+// Function to draw a random question from the unanswered questions
+function getRandomUnansweredQuestion(responses: Responses) {
+  const unansweredQuestions = getUnansweredQuestions(responses);
+  if (unansweredQuestions.length === 0) {
+    return null;
+  }
+  const randomIndex = Math.floor(Math.random() * unansweredQuestions.length);
+  return unansweredQuestions[randomIndex].question;
+}
 
 // Function to create the prompt
 function createConversationPrompt() {
@@ -163,6 +170,8 @@ const JSON_AI_INSTRUCTIONS = `
    - Make sure to extract measurable information for each field.
 5. **Completion Check:**
    - Ensure all fields are filled appropriately, and the JSON structure is accurate and complete.
+6. **Correction:**
+   - If any provided information does not match the description, leave the field empty or with the value 'N/A'.
 6. **Return JSON:**
    - Only return the JSON structure once all the information is filled in.
 `;
@@ -230,6 +239,12 @@ async function generateCompletion(transcription: string, sessionId: string): Pro
 
     console.debug('Responses:', responses);
 
+    let nextQuestion = getRandomUnansweredQuestion(responses);
+
+    if (!nextQuestion) {
+      let nextQuestion = 'All questions have been answered.';
+    }
+
     const conversationPrompt = createConversationPrompt();
     const conversationChain = initializeConversationChain(conversationPrompt);
     const jsonFillPrompt = createJsonFillPrompt();
@@ -240,7 +255,7 @@ async function generateCompletion(transcription: string, sessionId: string): Pro
       sessionId,
     );
     const completion = await parallelChain.invoke(
-      { input: transcription, responses: responses },
+      { input: transcription, responses: responses, question: nextQuestion },
       { configurable: { sessionId } },
     );
     console.debug('Completion:', completion);

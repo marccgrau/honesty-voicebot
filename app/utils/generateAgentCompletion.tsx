@@ -19,7 +19,6 @@ interface Responses extends Record<string, string> {
   sugaryBeverages: string;
   alcohol: string;
   exerciseDays: string;
-  exerciseType: string;
   exerciseDuration: string;
   sleepHours: string;
   stressFrequency: string;
@@ -33,7 +32,6 @@ const initialResponses: Responses = {
   sugaryBeverages: '',
   alcohol: '',
   exerciseDays: '',
-  exerciseType: '',
   exerciseDuration: '',
   sleepHours: '',
   stressFrequency: '',
@@ -47,18 +45,7 @@ const graphState: StateGraphArgs<AgentState>['channels'] = {
   },
   responses: {
     value: (x: Record<string, string>, y: Record<string, string>) => ({ ...x, ...y }),
-    default: () => ({
-      fruitsVegetables: '',
-      fastFood: '',
-      waterIntake: '',
-      sugaryBeverages: '',
-      alcohol: '',
-      exerciseDays: '',
-      exerciseDuration: '',
-      physicalActivities: '',
-      sleepHours: '',
-      stressFrequency: '',
-    }),
+    default: () => initialResponses,
   },
 };
 
@@ -69,12 +56,15 @@ const model = new ChatOpenAI({
 });
 
 // Function to create a prompt for a specific question
-const createQuestionPrompt = (question: string) =>
+const createQuestionPrompt = (state: AgentState, question: string) =>
   ChatPromptTemplate.fromMessages([
     [
       'system',
-      `You are a polite interviewer conducting an interview to gather information for calculating a health insurance premium. Ensure all questions are answered thoroughly.`,
+      `You are a polite interviewer conducting an interview to gather information for calculating a health insurance premium. Ensure all questions are answered thoroughly.
+      First you get the last user input, then you receive the next question you should ask.`,
     ],
+    ['system', 'The following responses are currently already available:'],
+    ['system', JSON.stringify(state.responses)],
     new MessagesPlaceholder('messages'),
     ['ai', question],
   ]);
@@ -92,23 +82,54 @@ const questions = [
   { key: 'stressFrequency', question: 'How often do you feel stressed?' },
 ];
 
-// Function to create a node for a specific question
-const createQuestionNode =
-  (questionKey: string, questionText: string) => async (state: AgentState) => {
-    const prompt = createQuestionPrompt(questionText);
-    const questionChain = prompt.pipe(model);
+// Function to get the first unanswered question
+const getFirstUnansweredQuestion = (responses: Record<string, string>) => {
+  for (const { key, question } of questions) {
+    if (!responses[key]) {
+      return { key, question };
+    }
+  }
+  return null;
+};
 
-    // Invoke the chain and extract the response content
-    const response = await questionChain.invoke({ messages: state.messages });
-    const userMessageContent = response.lc_kwargs?.content || '';
+// Function to create a node that asks the next question
+const questionNode = async (state: AgentState): Promise<AgentState | typeof END> => {
+  const lastMessage = state.messages[state.messages.length - 1];
+  if (lastMessage instanceof HumanMessage) {
+    const lastInput = lastMessage.lc_kwargs?.content;
 
-    // Record the response in the state
-    const userMessage = new HumanMessage(userMessageContent);
-    state.responses[questionKey] = userMessageContent;
-    state.messages.push(userMessage);
+    // Find the last asked question
+    const lastAskedQuestion = questions.find(
+      ({ question }) => state.messages[state.messages.length - 2]?.content === question,
+    );
 
-    return state;
-  };
+    if (lastAskedQuestion) {
+      // Save the last input to the appropriate response
+      state.responses[lastAskedQuestion.key] = lastInput;
+    }
+
+    const firstUnanswered = getFirstUnansweredQuestion(state.responses);
+
+    if (firstUnanswered) {
+      const prompt = createQuestionPrompt(state, firstUnanswered.question);
+      const questionChain = prompt.pipe(model);
+
+      // Invoke the chain and extract the response content
+      const response = await questionChain.invoke({ messages: state.messages });
+      const userMessageContent = response.lc_kwargs?.content || '';
+
+      // Record the response in the state
+      const userMessage = new HumanMessage(userMessageContent);
+      state.messages.push(userMessage);
+
+      return state;
+    } else {
+      state.messages.push(new AIMessage('Thank you for your participation and time.'));
+      return END;
+    }
+  }
+  return state;
+};
 
 // Initialize the state graph with the defined channels
 const workflow = new StateGraph<AgentState>({ channels: graphState })
@@ -118,66 +139,21 @@ const workflow = new StateGraph<AgentState>({ channels: graphState })
       new AIMessage("Welcome to the interview. Let's start with some questions."),
     );
     return state;
-  })
-  // Start the workflow at the welcome node
-  .addEdge(START, 'welcome')
-  // Add each question node explicitly
-  .addNode(
-    'fruitsVegetables',
-    createQuestionNode('fruitsVegetables', 'How often do you eat fruits and vegetables?'),
-  )
-  .addNode(
-    'fastFood',
-    createQuestionNode('fastFood', 'How often do you consume fast food or junk food?'),
-  )
-  .addNode(
-    'waterIntake',
-    createQuestionNode('waterIntake', 'How many glasses of water do you drink per day?'),
-  )
-  .addNode(
-    'sugaryBeverages',
-    createQuestionNode('sugaryBeverages', 'How often do you drink sugary beverages?'),
-  )
-  .addNode('alcohol', createQuestionNode('alcohol', 'How often do you consume alcohol?'))
-  .addNode(
-    'exerciseDays',
-    createQuestionNode('exerciseDays', 'How many days per week do you exercise?'),
-  )
-  .addNode(
-    'exerciseDuration',
-    createQuestionNode('exerciseDuration', 'On average, how long is each exercise session?'),
-  )
-  .addNode(
-    'sleepHours',
-    createQuestionNode('sleepHours', 'How many hours of sleep do you get on average per night?'),
-  )
-  .addNode(
-    'stressFrequency',
-    createQuestionNode('stressFrequency', 'How often do you feel stressed?'),
-  )
-  // Add a completion check node
-  .addNode('checkCompletion', async (state: AgentState) => {
-    const allAnswered = questions.every(({ key }) => state.responses[key]);
-    if (allAnswered) {
-      state.messages.push(new AIMessage('Thank you for your participation and time.'));
-    }
-    return state;
-  })
-  // Link the nodes in the order of the questions
-  .addEdge('welcome', 'fruitsVegetables')
-  .addEdge('fruitsVegetables', 'fastFood')
-  .addEdge('fastFood', 'waterIntake')
-  .addEdge('waterIntake', 'sugaryBeverages')
-  .addEdge('sugaryBeverages', 'alcohol')
-  .addEdge('alcohol', 'exerciseDays')
-  .addEdge('exerciseDays', 'exerciseDuration')
-  .addEdge('exerciseDuration', 'sleepHours')
-  .addEdge('sleepHours', 'stressFrequency')
-  .addEdge('stressFrequency', 'checkCompletion')
-  .addEdge('checkCompletion', END);
+  });
+// Add the question node
+
+// TODO: add human-in-the-loop to provide answers
+// //   .addNode('questionNode', questionNode)
+//   // Add edges
+//   .addEdge(START, 'welcome')
+//   .addEdge('welcome', 'questionNode')
+//   .addEdge('questionNode', 'questionNode')
+//   .addEdge('questionNode', END);
 
 // Compile the workflow with a memory saver as the checkpointer
 const app = workflow.compile({ checkpointer: new MemorySaver() });
+
+console.log('App compiled:', app);
 
 // Function to generate chain completion
 async function generateCompletion(transcription: string, sessionId: string): Promise<any> {
@@ -192,13 +168,23 @@ async function generateCompletion(transcription: string, sessionId: string): Pro
       responses: responses,
     };
 
+    console.log('Initial state:', state);
+
     // Invoke the workflow with the initial state
     const finalState = await app.invoke(state, { configurable: { thread_id: sessionId } });
 
     // Save updated responses to MongoDB
     await saveJson(sessionId, finalState.responses);
 
-    return finalState.messages.map((message: string) => message).join('\n');
+    // Find the next question to ask
+    const firstUnanswered = getFirstUnansweredQuestion(finalState.responses);
+
+    if (firstUnanswered) {
+      return firstUnanswered.question;
+    }
+
+    // If no questions are left, return the thank you message
+    return 'Thank you for your participation and time.';
   } catch (error) {
     console.error('Error generating chain completion:', error);
     throw error;

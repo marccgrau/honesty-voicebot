@@ -33,6 +33,7 @@ export const config = {
   enableUsePhotUIToggle: false, // Display the use photo UI toggle
   enableChainModeUIToggle: true, // Display the chain mode UI toggle
   enableJsonModeUIToggle: true, // Display the json mode UI toggle
+  enableAgentModeUIToggle: false, // Display the agent mode UI toggle
   useAttributionComponent: true, // Use the attribution component to display the attribution of the AI models/services used
 
   // Rate limiting settings
