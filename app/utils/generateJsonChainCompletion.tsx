@@ -48,7 +48,7 @@ Ask the user the following question:
 {question}
 
 If it states "All questions have been answered." is returned, the interview is complete.
-Only if the interview is complete thank the user for his time and end the conversation.
+Only if the interview is complete thank the user for his time and end the conversation, do not ask any more questions.
 
 **Instructions:**
 - If there are any open questions, ask them in a conversational manner.
@@ -65,18 +65,30 @@ class QuestionManager {
 
   constructor() {
     this.questions = {
-      fruitsVegetables: { question: 'How often do you eat fruits and vegetables?', answer: '' },
-      fastFood: { question: 'How often do you consume fast food or junk food?', answer: '' },
+      fruitsVegetables: {
+        question: 'How many fruits or vegetables do you eat per day?',
+        answer: '',
+      },
+      fastFood: {
+        question: 'How often do you consume fast food or junk food per week?',
+        answer: '',
+      },
       waterIntake: { question: 'How many glasses of water do you drink per day?', answer: '' },
-      sugaryBeverages: { question: 'How often do you drink sugary beverages?', answer: '' },
-      alcohol: { question: 'How often do you consume alcohol?', answer: '' },
+      sugaryBeverages: {
+        question: 'How many glasses of sugary beverages do you drink per day?',
+        answer: '',
+      },
+      alcohol: { question: 'How often do you consume alcohol per week?', answer: '' },
       exerciseDays: { question: 'How many days per week do you exercise?', answer: '' },
-      exerciseDuration: { question: 'On average, how long is each exercise session?', answer: '' },
+      exerciseDuration: {
+        question: 'On average, how long is a typical exercise session when you train?',
+        answer: '',
+      },
       sleepHours: {
         question: 'How many hours of sleep do you get on average per night?',
         answer: '',
       },
-      stressFrequency: { question: 'How often do you feel stressed?', answer: '' },
+      stressFrequency: { question: 'How often do you feel stressed in a week?', answer: '' },
     };
   }
 
