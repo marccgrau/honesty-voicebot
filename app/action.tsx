@@ -187,10 +187,11 @@ async function action(obj: FormData): Promise<any> {
       }
 
       if (useChainMode && useJsonMode) {
+        console.log('Using both chain and json modes');
         responseText = (await handleJsonChainResponseGeneration(transcription, sessionId)) || '';
       }
 
-      if (useChainMode) {
+      if (useChainMode && !useJsonMode) {
         responseText = (await handleChainResponseGeneration(transcription, sessionId)) || '';
       }
 

@@ -13,7 +13,7 @@ if (!UPSTASH_REDIS_REST_URL || !UPSTASH_REDIS_REST_TOKEN) {
   throw new Error('Upstash Redis environment variables are not set.');
 }
 
-interface Responses {
+export interface Responses {
   fruitsVegetables: string;
   fastFood: string;
   waterIntake: string;
@@ -37,11 +37,6 @@ const initialResponses: Responses = {
   stressFrequency: '',
 };
 
-interface Question {
-  key: keyof Responses;
-  question: string;
-}
-
 const CONVERSATION_SYSTEM_MESSAGE = `
 You are a polite interviewer conducting an interview to gather information for calculating a health insurance premium.
 Ensure all questions are answered thoroughly and one by one.
@@ -49,54 +44,93 @@ You will receive a question to ask the user. After the user responds, you will r
 `;
 
 const CONVERSATION_AI_INSTRUCTIONS = `
-Assess if the user's response is relevant to the question asked.
-If the response is relevant, proceed with the next question as stated below.
+Ask the user the following question:
 {question}
 
-If above "All questions have been answered." is returned, the interview is complete.
+If it states "All questions have been answered." is returned, the interview is complete.
 Only if the interview is complete thank the user for his time and end the conversation.
 
 **Instructions:**
-- Ask the user the question provided, if there are any open questions.
-- Talk in a polite and professional manner.
+- If there are any open questions, ask them in a conversational manner.
+- Talk politely.
 `;
 
-// List of questions to be asked during the interview
-const questions: Question[] = [
-  { key: 'fruitsVegetables', question: 'How often do you eat fruits and vegetables?' },
-  { key: 'fastFood', question: 'How often do you consume fast food or junk food?' },
-  { key: 'waterIntake', question: 'How many glasses of water do you drink per day?' },
-  { key: 'sugaryBeverages', question: 'How often do you drink sugary beverages?' },
-  { key: 'alcohol', question: 'How often do you consume alcohol?' },
-  { key: 'exerciseDays', question: 'How many days per week do you exercise?' },
-  { key: 'exerciseDuration', question: 'On average, how long is each exercise session?' },
-  { key: 'sleepHours', question: 'How many hours of sleep do you get on average per night?' },
-  { key: 'stressFrequency', question: 'How often do you feel stressed?' },
-];
-
-// Function to get all unanswered questions
-function getUnansweredQuestions(responses: Responses) {
-  return questions.filter((q) => {
-    const response = responses[q.key];
-    return !response || response === 'N/A';
-  });
+interface Response {
+  question: string;
+  answer: string;
 }
 
-// Function to draw a random question from the unanswered questions
-function getRandomUnansweredQuestion(responses: Responses) {
-  const unansweredQuestions = getUnansweredQuestions(responses);
-  if (unansweredQuestions.length === 0) {
-    return null;
+class QuestionManager {
+  private questions: { [key in keyof Responses]: Response };
+
+  constructor() {
+    this.questions = {
+      fruitsVegetables: { question: 'How often do you eat fruits and vegetables?', answer: '' },
+      fastFood: { question: 'How often do you consume fast food or junk food?', answer: '' },
+      waterIntake: { question: 'How many glasses of water do you drink per day?', answer: '' },
+      sugaryBeverages: { question: 'How often do you drink sugary beverages?', answer: '' },
+      alcohol: { question: 'How often do you consume alcohol?', answer: '' },
+      exerciseDays: { question: 'How many days per week do you exercise?', answer: '' },
+      exerciseDuration: { question: 'On average, how long is each exercise session?', answer: '' },
+      sleepHours: {
+        question: 'How many hours of sleep do you get on average per night?',
+        answer: '',
+      },
+      stressFrequency: { question: 'How often do you feel stressed?', answer: '' },
+    };
   }
-  const randomIndex = Math.floor(Math.random() * unansweredQuestions.length);
-  return unansweredQuestions[randomIndex].question;
+
+  loadResponses(responses: Responses) {
+    for (const key of Object.keys(responses) as Array<keyof Responses>) {
+      if (this.questions[key]) {
+        this.questions[key].answer = responses[key];
+      } else {
+        console.error(`Invalid key in responses: ${key}`);
+      }
+    }
+  }
+
+  getUnansweredQuestions(): { key: keyof Responses; question: string }[] {
+    return Object.entries(this.questions)
+      .filter(
+        ([_, { answer }]) => !answer || answer.trim() === '' || answer.toLowerCase() === 'n/a',
+      )
+      .map(([key, { question }]) => ({ key: key as keyof Responses, question }));
+  }
+
+  getRandomUnansweredQuestion(): string {
+    const unansweredQuestions = this.getUnansweredQuestions();
+    console.log('Unanswered Questions:', unansweredQuestions);
+    if (unansweredQuestions.length === 0) {
+      return 'All questions have been answered.';
+    }
+    const randomIndex = Math.floor(Math.random() * unansweredQuestions.length);
+    return unansweredQuestions[randomIndex].question;
+  }
+
+  getResponses(): Responses {
+    const responses: Responses = {
+      fruitsVegetables: '',
+      fastFood: '',
+      waterIntake: '',
+      sugaryBeverages: '',
+      alcohol: '',
+      exerciseDays: '',
+      exerciseDuration: '',
+      sleepHours: '',
+      stressFrequency: '',
+    };
+    for (const key of Object.keys(this.questions) as Array<keyof Responses>) {
+      responses[key] = this.questions[key].answer;
+    }
+    return responses;
+  }
 }
 
 // Function to create the prompt
 function createConversationPrompt() {
   return ChatPromptTemplate.fromMessages([
     ['system', CONVERSATION_SYSTEM_MESSAGE],
-    new MessagesPlaceholder('history'),
     ['human', '{input}'],
     ['ai', CONVERSATION_AI_INSTRUCTIONS],
   ]);
@@ -239,11 +273,11 @@ async function generateCompletion(transcription: string, sessionId: string): Pro
 
     console.debug('Responses:', responses);
 
-    let nextQuestion = getRandomUnansweredQuestion(responses);
+    const questionManager = new QuestionManager();
+    questionManager.loadResponses(responses);
 
-    if (!nextQuestion) {
-      let nextQuestion = 'All questions have been answered.';
-    }
+    const nextQuestion = questionManager.getRandomUnansweredQuestion();
+    console.log('Next Question:', nextQuestion);
 
     const conversationPrompt = createConversationPrompt();
     const conversationChain = initializeConversationChain(conversationPrompt);

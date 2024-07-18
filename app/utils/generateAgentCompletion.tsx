@@ -131,15 +131,15 @@ const questionNode = async (state: AgentState): Promise<AgentState | typeof END>
   return state;
 };
 
-// Initialize the state graph with the defined channels
-const workflow = new StateGraph<AgentState>({ channels: graphState })
-  // Add a welcome node that introduces the interview
-  .addNode('welcome', async (state: AgentState) => {
-    state.messages.push(
-      new AIMessage("Welcome to the interview. Let's start with some questions."),
-    );
-    return state;
-  });
+// // Initialize the state graph with the defined channels
+// const workflow = new StateGraph<AgentState>({ channels: graphState })
+//   // Add a welcome node that introduces the interview
+//   .addNode('welcome', async (state: AgentState) => {
+//     state.messages.push(
+//       new AIMessage("Welcome to the interview. Let's start with some questions."),
+//     );
+//     return state;
+//   });
 // Add the question node
 
 // TODO: add human-in-the-loop to provide answers
@@ -150,54 +150,54 @@ const workflow = new StateGraph<AgentState>({ channels: graphState })
 //   .addEdge('questionNode', 'questionNode')
 //   .addEdge('questionNode', END);
 
-// Compile the workflow with a memory saver as the checkpointer
-const app = workflow.compile({ checkpointer: new MemorySaver() });
+// // Compile the workflow with a memory saver as the checkpointer
+// const app = workflow.compile({ checkpointer: new MemorySaver() });
 
-console.log('App compiled:', app);
+// console.log('App compiled:', app);
 
-// Function to generate chain completion
-async function generateCompletion(transcription: string, sessionId: string): Promise<any> {
-  try {
-    // Load existing responses from MongoDB
-    let responses: Responses = ((await getJson(sessionId)) as Responses) || initialResponses;
+// // Function to generate chain completion
+// async function generateCompletion(transcription: string, sessionId: string): Promise<any> {
+//   try {
+//     // Load existing responses from MongoDB
+//     let responses: Responses = ((await getJson(sessionId)) as Responses) || initialResponses;
 
-    console.debug('Responses:', responses);
+//     console.debug('Responses:', responses);
 
-    const state: AgentState = {
-      messages: [new HumanMessage(transcription)],
-      responses: responses,
-    };
+//     const state: AgentState = {
+//       messages: [new HumanMessage(transcription)],
+//       responses: responses,
+//     };
 
-    console.log('Initial state:', state);
+//     console.log('Initial state:', state);
 
-    // Invoke the workflow with the initial state
-    const finalState = await app.invoke(state, { configurable: { thread_id: sessionId } });
+//     // Invoke the workflow with the initial state
+//     // const finalState = await app.invoke(state, { configurable: { thread_id: sessionId } });
 
-    // Save updated responses to MongoDB
-    await saveJson(sessionId, finalState.responses);
+//     // // Save updated responses to MongoDB
+//     // await saveJson(sessionId, finalState.responses);
 
-    // Find the next question to ask
-    const firstUnanswered = getFirstUnansweredQuestion(finalState.responses);
+//     // // Find the next question to ask
+//     // const firstUnanswered = getFirstUnansweredQuestion(finalState.responses);
 
-    if (firstUnanswered) {
-      return firstUnanswered.question;
-    }
+//     if (firstUnanswered) {
+//       return firstUnanswered.question;
+//     }
 
-    // If no questions are left, return the thank you message
-    return 'Thank you for your participation and time.';
-  } catch (error) {
-    console.error('Error generating chain completion:', error);
-    throw error;
-  }
-}
+//     // If no questions are left, return the thank you message
+//     return 'Thank you for your participation and time.';
+//   } catch (error) {
+//     console.error('Error generating chain completion:', error);
+//     throw error;
+//   }
+// }
 
-// Exporting the main function with traceability
+// // Exporting the main function with traceability
 export const generateAgentCompletion = traceable(
   async (transcription: string, sessionId: string): Promise<any> => {
     if (config.inferenceModelProvider !== 'openai') {
       throw new Error('This functionality is not yet available for the specified provider.');
     }
-    return generateCompletion(transcription, sessionId);
+    return null;
   },
   { name: 'generateAgentCompletion' },
 );
