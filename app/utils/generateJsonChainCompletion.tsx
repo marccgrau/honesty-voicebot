@@ -39,16 +39,14 @@ const initialResponses: Responses = {
 
 const CONVERSATION_SYSTEM_MESSAGE = `
 You are a polite interviewer conducting an interview to gather information for calculating a health insurance premium.
-Ensure all questions are answered thoroughly and one by one.
-You will receive a question to ask the user. After the user responds, you will receive the next question to ask.
+You will receive a question to ask the user in a conversational manner.
+If there are no more questions to ask, you will receive a message stating "All questions have been answered.".
+If all questions have been answered, thank the user for his time and end the conversation.
 `;
 
 const CONVERSATION_AI_INSTRUCTIONS = `
 Ask the user the following question:
 {question}
-
-If it states "All questions have been answered." is returned, the interview is complete.
-Only if the interview is complete thank the user for his time and end the conversation, do not ask any more questions.
 
 **Instructions:**
 - If there are any open questions, ask them in a conversational manner.
