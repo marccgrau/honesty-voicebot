@@ -4,7 +4,7 @@ import { traceable } from 'langsmith/traceable';
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
 import { RunnableWithMessageHistory, RunnableMap } from '@langchain/core/runnables';
 import { UpstashRedisChatMessageHistory } from '@langchain/community/stores/message/upstash_redis';
-import { saveJson, getJson } from './mongoUtil';
+import { saveResponses, getResponses } from './mongoUtil';
 
 const UPSTASH_REDIS_REST_URL = process.env.UPSTASH_REDIS_REST_URL!;
 const UPSTASH_REDIS_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN!;
@@ -284,7 +284,7 @@ function fetchParallelRunnableConvoAndJsonFill(
 async function generateCompletion(transcription: string, sessionId: string): Promise<any> {
   try {
     // Load existing responses from MongoDB
-    let responses: Responses = ((await getJson(sessionId)) as Responses) || initialResponses;
+    let responses: Responses = ((await getResponses(sessionId)) as Responses) || initialResponses;
 
     console.debug('Responses:', responses);
 
@@ -312,7 +312,7 @@ async function generateCompletion(transcription: string, sessionId: string): Pro
     responses = completion.json?.lc_kwargs?.content || initialResponses;
 
     // Save updated responses to MongoDB
-    saveJson(sessionId, responses);
+    saveResponses(sessionId, responses);
 
     return completion.conversation?.lc_kwargs?.content || 'No information available.';
   } catch (error) {

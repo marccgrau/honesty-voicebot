@@ -12,6 +12,7 @@ import { SpotifyTrack } from './components/tools/Spotify';
 import { ClockComponent } from './components/tools/Clock';
 import { config } from './config';
 import Image from 'next/image';
+import PrefilledResultsForm from './components/PrefilledResultsForm';
 
 interface Message {
   rateLimitReached: any;
@@ -46,6 +47,17 @@ const Main = () => {
   const [message, setMessage] = useState<{ message: string; responseTime: number } | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [conversationCompleted, setConversationCompleted] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+
+  useEffect(() => {
+    let sessionId = localStorage.getItem('sessionId');
+    if (!sessionId) {
+      sessionId = crypto.randomUUID();
+      localStorage.setItem('sessionId', sessionId);
+    }
+    setSessionId(sessionId);
+  }, []);
 
   const handleSettingsClick = () => {
     setShowSettings(!showSettings);
@@ -82,7 +94,6 @@ const Main = () => {
     setMessage(null);
 
     for await (const message of readStreamableValue<Message>(streamableValue)) {
-      console.log('Received Message:', message?.result);
       if (message && message.rateLimitReached && typeof message.rateLimitReached === 'string') {
         setMessage({ message: message.rateLimitReached, responseTime: 0 });
       }

@@ -21,7 +21,7 @@ async function connectDB() {
   return db;
 }
 
-export async function saveJson(sessionId: string, jsonData: Responses): Promise<void> {
+export async function saveResponses(sessionId: string, jsonData: Responses): Promise<void> {
   try {
     const database = await connectDB();
     await database
@@ -52,7 +52,7 @@ function validateResponses(data: any): data is Responses {
   return requiredKeys.every((key) => typeof data[key] === 'string');
 }
 
-export async function getJson(sessionId: string): Promise<Responses | null> {
+export async function getResponses(sessionId: string): Promise<Responses | null> {
   try {
     const database = await connectDB();
     const result = await database.collection('responses').findOne({ sessionId });
