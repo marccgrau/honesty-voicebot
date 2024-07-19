@@ -2,11 +2,18 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+const ttsVoices = ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'];
+
+function getRandomTtsVoice() {
+  const randomIndex = Math.floor(Math.random() * ttsVoices.length);
+  return ttsVoices[randomIndex];
+}
+
 export const config = {
   // Inference settings
   inferenceModelProvider: 'openai', // 'groq' or 'openai'
-  inferenceModel: 'gpt-4o', // Groq: 'llama3-70b-8192' or 'llama3-8b-8192'.. OpenAI: 'gpt-4-turbo etc
-  jsonValidationModel: 'gpt-4o',
+  inferenceModel: 'gpt-4o-mini', // Groq: 'llama3-70b-8192' or 'llama3-8b-8192'.. OpenAI: 'gpt-4-turbo etc
+  jsonValidationModel: 'gpt-4o-mini',
 
   // Whisper settings
   whisperModelProvider: 'groq', // 'groq' or 'openai'
@@ -15,7 +22,7 @@ export const config = {
   // TTS settings
   ttsModelProvider: 'openai', // only openai supported for now...
   ttsModel: 'tts-1', // only openai supported for now...s
-  ttsvoice: 'alloy', // only openai supported for now... [alloy, echo, fable, onyx, nova, and shimmer]
+  ttsvoice: getRandomTtsVoice(), // only openai supported for now... [alloy, echo, fable, onyx, nova, and shimmer]
 
   // OPTIONAL:Vision settings
   visionModelProvider: 'google', // 'openai' or 'fal.ai' or 'google'

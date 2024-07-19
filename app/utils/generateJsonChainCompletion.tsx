@@ -39,18 +39,24 @@ const initialResponses: Responses = {
 
 const CONVERSATION_SYSTEM_MESSAGE = `
 You are a polite interviewer conducting an interview to gather information for calculating a health insurance premium.
-You will receive a question to ask the user in a conversational manner.
+You will receive the conversation history and the next question to ask the user in a conversational manner.
 If there are no more questions to ask, you will receive a message stating "All questions have been answered.".
 If all questions have been answered, thank the user for his time and end the conversation.
 `;
 
 const CONVERSATION_AI_INSTRUCTIONS = `
+This is the conversation that has been conducted so far:
+{history}
+
 Ask the user the following question:
 {question}
 
 **Instructions:**
+- Do not repeat already answered questions.
 - If there are any open questions, ask them in a conversational manner.
 - Talk politely.
+- If you get "All questions have been answered." instead of a next question, thank the user for his time and end the conversation.
+- Do not engage in any other conversation after all questions have been answered.
 `;
 
 interface Response {
@@ -141,6 +147,7 @@ class QuestionManager {
 function createConversationPrompt() {
   return ChatPromptTemplate.fromMessages([
     ['system', CONVERSATION_SYSTEM_MESSAGE],
+    new MessagesPlaceholder('history'),
     ['human', '{input}'],
     ['ai', CONVERSATION_AI_INSTRUCTIONS],
   ]);
@@ -182,7 +189,7 @@ You are an expert at analyzing conversation histories.
 Your task is to analyze a conversation between a user and an AI assistant and fill in the JSON structure with all available information. Ensure the JSON structure is complete and accurate.
 
 **Exemplary JSON Structure:**
-  "fruitsVegetables": "Weekly frequency of eating fruits and vegetables",
+  "fruitsVegetables": "Daily amount of eaten fruits and vegetables",
   "fastFood": "Weekly frequency of consuming fast food or junk food",
   "waterIntake": "Daily water intake (glasses)",
   "sugaryBeverages": "Daily intake sugary beverages (glasses)",
