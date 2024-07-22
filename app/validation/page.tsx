@@ -1,11 +1,11 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ClipLoader } from 'react-spinners';
 import { Responses } from '../../types/responses';
 import PrefilledResultsForm from '../../components/PrefilledResultsForm';
 
-const ValidationPage = () => {
+const ValidationPageContent = () => {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('sessionId');
   const [responses, setResponses] = useState<Responses | null>(null);
@@ -56,7 +56,7 @@ const ValidationPage = () => {
 
       if (response.ok) {
         console.log('Responses successfully saved');
-        router.push('/thankyou'); // Navigate to the thank you page
+        router.push('/thankyou');
       } else {
         console.error('Failed to save final responses');
       }
@@ -93,5 +93,17 @@ const ValidationPage = () => {
     </div>
   );
 };
+
+const ValidationPage = () => (
+  <Suspense
+    fallback={
+      <div className="flex h-screen w-screen items-center justify-center">
+        <ClipLoader size={50} color="#123abc" />
+      </div>
+    }
+  >
+    <ValidationPageContent />
+  </Suspense>
+);
 
 export default ValidationPage;
