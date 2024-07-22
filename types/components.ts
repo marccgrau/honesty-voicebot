@@ -50,3 +50,9 @@ export interface Message {
   time?: string;
   allQuestionsAnswered?: boolean;
 }
+
+export interface PrefilledResultsFormProps {
+  sessionId: string | null;
+  responses: Responses;
+  onConfirm: (updatedResponses: Responses) => void;
+}

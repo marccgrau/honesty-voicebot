@@ -1,12 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { Responses } from '../types/responses';
-
-interface PrefilledResultsFormProps {
-  sessionId: string | null;
-  responses: Responses;
-  onConfirm: (updatedResponses: Responses) => void;
-}
+import { PrefilledResultsFormProps } from '../types/components';
 
 const PrefilledResultsForm: React.FC<PrefilledResultsFormProps> = ({
   sessionId,
