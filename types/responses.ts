@@ -1,13 +1,13 @@
 export interface Responses {
-  fruitsVegetables: string;
-  fastFood: string;
-  waterIntake: string;
-  sugaryBeverages: string;
-  alcohol: string;
-  exerciseDays: string;
-  exerciseDuration: string;
-  sleepHours: string;
-  stressFrequency: string;
+  fruitsAndVegetablesPerDay: string;
+  fastFoodPerWeek: string;
+  waterIntakePerDay: string;
+  sugaryBeveragesPerDay: string;
+  alcoholPerWeek: string;
+  exerciseDaysPerWeek: string;
+  averageExerciseDurationInMinutes: string;
+  sleepHoursPerNight: string;
+  stressFrequencyPerWeek: string;
 }
 
 export interface Response {

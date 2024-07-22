@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useActions, readStreamableValue } from 'ai/rsc';
 import { type AI } from './action';
 import { Settings } from '../components/Settings';
@@ -15,6 +16,7 @@ import Image from 'next/image';
 import { UIComponent, Message } from '../types/components';
 
 const Main = () => {
+  const router = useRouter();
   const { action } = useActions<typeof AI>();
   const [useChainMode, setUseChainMode] = useState(true);
   const [useJsonMode, setJsonMode] = useState(true);
@@ -108,6 +110,10 @@ const Main = () => {
       if (message && message.spotify && typeof message.spotify === 'string') {
         setUseSpotify(message.spotify);
       }
+      if (message && message.allQuestionsAnswered) {
+        console.log('All questions answered');
+        setConversationCompleted(true);
+      }
     }
     let totalResponseTime = 0;
     if (transcriptionResponseTime) {
@@ -120,7 +126,19 @@ const Main = () => {
       totalResponseTime += audioResponseTime;
     }
     setTotalResponseTime(totalResponseTime);
+
+    if (conversationCompleted && sessionId) {
+      // Redirect to the validation page with the sessionId as query parameter
+      console.log('Redirecting to validation page');
+      router.push(`/validation?sessionId=${sessionId}`);
+    }
   };
+  useEffect(() => {
+    if (conversationCompleted && sessionId) {
+      // Redirect to the validation page with the sessionId as query parameter
+      router.push(`/validation?sessionId=${sessionId}`);
+    }
+  }, [conversationCompleted, sessionId, router]);
   useEffect(() => {
     const checkMobile = () => {
       const isMobileDevice = window.innerWidth <= 768; // Adjust the breakpoint as needed

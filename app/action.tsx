@@ -188,7 +188,9 @@ async function action(obj: FormData): Promise<any> {
 
       if (useChainMode && useJsonMode) {
         console.log('Using both chain and json modes');
-        responseText = (await handleJsonChainResponseGeneration(transcription, sessionId)) || '';
+        const response = (await handleJsonChainResponseGeneration(transcription, sessionId)) || '';
+        responseText = response.responseText;
+        streamable.update({ allQuestionsAnswered: response.allQuestionsAnswered });
       }
 
       if (useChainMode && !useJsonMode) {

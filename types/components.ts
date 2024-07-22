@@ -1,3 +1,5 @@
+import { Responses } from './responses';
+
 export interface InputComponentProps {
   onSubmit: (formData: FormData) => void;
   useTTS: boolean;
@@ -9,7 +11,7 @@ export interface InputComponentProps {
 }
 
 export interface PrefilledResultsFormProps {
-  sessionId: string;
+  responses: Responses;
 }
 
 export interface SettingsProps {
@@ -46,4 +48,5 @@ export interface Message {
   weather?: string;
   spotify?: string;
   time?: string;
+  allQuestionsAnswered?: boolean;
 }
