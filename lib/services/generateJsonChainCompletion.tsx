@@ -15,15 +15,15 @@ if (!UPSTASH_REDIS_REST_URL || !UPSTASH_REDIS_REST_TOKEN) {
 }
 
 const initialResponses: Responses = {
-  fruitsVegetables: '',
-  fastFood: '',
-  waterIntake: '',
-  sugaryBeverages: '',
-  alcohol: '',
-  exerciseDays: '',
-  exerciseDuration: '',
-  sleepHours: '',
-  stressFrequency: '',
+  fruitsAndVegetablesPerDay: '',
+  fastFoodPerWeek: '',
+  waterIntakePerDay: '',
+  sugaryBeveragesPerDay: '',
+  alcoholPerWeek: '',
+  exerciseDaysPerWeek: '',
+  averageExerciseDurationInMinutes: '',
+  sleepHoursPerNight: '',
+  stressFrequencyPerWeek: '',
 };
 
 const CONVERSATION_SYSTEM_MESSAGE = `
@@ -43,9 +43,10 @@ Ask the user the following question:
 **Instructions:**
 - Do not repeat already answered questions.
 - If there are any open questions, ask them in a conversational manner.
-- Talk politely.
-- If you get "All questions have been answered." instead of a next question, thank the user for his time and end the conversation.
+- Talk politely, and ask the questions with respect to the temporal context.
+- If you get "All questions have been answered." instead of a next question, thank the user for his time and end the conversation. Only finish the conversation if you get this message.
 - Do not engage in any other conversation after all questions have been answered.
+- Do not summarize the results at the end of the conversation.
 `;
 
 class QuestionManager {
@@ -53,30 +54,39 @@ class QuestionManager {
 
   constructor() {
     this.questions = {
-      fruitsVegetables: {
+      fruitsAndVegetablesPerDay: {
         question: 'How many fruits or vegetables do you eat per day?',
         answer: '',
       },
-      fastFood: {
-        question: 'How often do you consume fast food or junk food per week?',
+      fastFoodPerWeek: {
+        question: 'On how many days do you consume fast food or junk food in a week?',
         answer: '',
       },
-      waterIntake: { question: 'How many glasses of water do you drink per day?', answer: '' },
-      sugaryBeverages: {
+      waterIntakePerDay: {
+        question: 'How many glasses of water do you drink per day?',
+        answer: '',
+      },
+      sugaryBeveragesPerDay: {
         question: 'How many glasses of sugary beverages do you drink per day?',
         answer: '',
       },
-      alcohol: { question: 'How often do you consume alcohol per week?', answer: '' },
-      exerciseDays: { question: 'How many days per week do you exercise?', answer: '' },
-      exerciseDuration: {
-        question: 'On average, how long is a typical exercise session when you train?',
+      alcoholPerWeek: {
+        question: 'On how many days do you consume alcohol in a week?',
         answer: '',
       },
-      sleepHours: {
+      exerciseDaysPerWeek: { question: 'How many days per week do you exercise?', answer: '' },
+      averageExerciseDurationInMinutes: {
+        question: 'On average in minutes, how long is a typical exercise session when you train?',
+        answer: '',
+      },
+      sleepHoursPerNight: {
         question: 'How many hours of sleep do you get on average per night?',
         answer: '',
       },
-      stressFrequency: { question: 'How often do you feel stressed in a week?', answer: '' },
+      stressFrequencyPerWeek: {
+        question: 'On how many days do you feel stressed in a week?',
+        answer: '',
+      },
     };
   }
 
@@ -110,15 +120,15 @@ class QuestionManager {
 
   getResponses(): Responses {
     const responses: Responses = {
-      fruitsVegetables: '',
-      fastFood: '',
-      waterIntake: '',
-      sugaryBeverages: '',
-      alcohol: '',
-      exerciseDays: '',
-      exerciseDuration: '',
-      sleepHours: '',
-      stressFrequency: '',
+      fruitsAndVegetablesPerDay: '',
+      fastFoodPerWeek: '',
+      waterIntakePerDay: '',
+      sugaryBeveragesPerDay: '',
+      alcoholPerWeek: '',
+      exerciseDaysPerWeek: '',
+      averageExerciseDurationInMinutes: '',
+      sleepHoursPerNight: '',
+      stressFrequencyPerWeek: '',
     };
     for (const key of Object.keys(this.questions) as Array<keyof Responses>) {
       responses[key] = this.questions[key].answer;
@@ -173,15 +183,15 @@ You are an expert at analyzing conversation histories.
 Your task is to analyze a conversation between a user and an AI assistant and fill in the JSON structure with all available information. Ensure the JSON structure is complete and accurate.
 
 **Exemplary JSON Structure:**
-  "fruitsVegetables": "Daily amount of eaten fruits and vegetables",
-  "fastFood": "Weekly frequency of consuming fast food or junk food",
-  "waterIntake": "Daily water intake (glasses)",
-  "sugaryBeverages": "Daily intake sugary beverages (glasses)",
-  "alcohol": "Weekly frequency of alcohol consumption",
-  "exerciseDays": "Days per week of exercise",
-  "exerciseDuration": "Average duration of each exercise session",
-  "sleepHours": "Average hours of sleep per night",
-  "stressFrequency": "Weekly frequency of feeling stressed"
+  "fruitsAndVegetablesPerDay": "Daily number of eaten fruits and vegetables",
+  "fastFoodPerWeek": "Weekly frequency of consuming fast food or junk food (number of days)",
+  "waterIntakePerDay": "Daily water intake in number of glasses",
+  "sugaryBeveragesPerDay": "Daily intake sugary beverages in number of glasses",
+  "alcoholPerWeek": "Weekly frequency of alcohol consumption (number of days)",
+  "exerciseDaysPerWeek": "Days per week of exercise (number of days)",
+  "averageExerciseDurationInMinutes": "Average duration of each exercise session in minutes",
+  "sleepHoursPerNight": "Average hours of sleep per night",
+  "stressFrequencyPerWeek": "Weekly frequency of feeling stressed (number of days)"
 `;
 
 const JSON_AI_INSTRUCTIONS = `
@@ -200,7 +210,7 @@ const JSON_AI_INSTRUCTIONS = `
 2. **Update Information:**
    - For each missing, incomplete or unanswered field, scan through the conversation history and current answer to find an answer if possible.
 4. **Measurability:**
-   - Make sure to extract measurable information for each field.
+   - Make sure to only extract measurable units as defined in the questions and return them as strings.
 5. **Completion Check:**
    - Ensure all fields are filled appropriately, and the JSON structure is accurate and complete.
 6. **Correction:**
@@ -294,9 +304,19 @@ async function generateCompletion(transcription: string, sessionId: string): Pro
     responses = completion.json?.lc_kwargs?.content || initialResponses;
 
     // Save updated responses to MongoDB
-    saveResponses(sessionId, responses);
+    await saveResponses(sessionId, responses);
 
-    return completion.conversation?.lc_kwargs?.content || 'No information available.';
+    if (nextQuestion === 'All questions have been answered.') {
+      return {
+        responseText: completion.conversation?.lc_kwargs?.content || 'No information available.',
+        allQuestionsAnswered: true,
+      };
+    }
+
+    return {
+      responseText: completion.conversation?.lc_kwargs?.content || 'No information available.',
+      allQuestionsAnswered: false,
+    };
   } catch (error) {
     console.error('Error generating chain completion:', error);
     throw error;

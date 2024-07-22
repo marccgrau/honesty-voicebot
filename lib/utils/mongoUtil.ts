@@ -1,6 +1,6 @@
 import { MongoClient, ServerApiVersion } from 'mongodb';
 import { config } from '../config';
-import { Responses } from '../services/generateJsonChainCompletion';
+import { Responses } from '../../types/responses';
 
 // Create a MongoClient instance and connect once
 const client = new MongoClient(config.mongoUri, {
@@ -37,17 +37,33 @@ export async function saveResponses(sessionId: string, jsonData: Responses): Pro
   }
 }
 
+export async function saveFinalResponses(sessionId: string, jsonData: Responses): Promise<void> {
+  try {
+    const database = await connectDB();
+    await database
+      .collection('final_responses')
+      .updateOne(
+        { sessionId },
+        { $set: { data: JSON.parse(JSON.stringify(jsonData)) } },
+        { upsert: true },
+      );
+  } catch (error) {
+    console.error('Error saving final responses to MongoDB:', error);
+    throw error;
+  }
+}
+
 function validateResponses(data: any): data is Responses {
   const requiredKeys: Array<keyof Responses> = [
-    'fruitsVegetables',
-    'fastFood',
-    'waterIntake',
-    'sugaryBeverages',
-    'alcohol',
-    'exerciseDays',
-    'exerciseDuration',
-    'sleepHours',
-    'stressFrequency',
+    'fruitsAndVegetablesPerDay',
+    'fastFoodPerWeek',
+    'waterIntakePerDay',
+    'sugaryBeveragesPerDay',
+    'alcoholPerWeek',
+    'exerciseDaysPerWeek',
+    'averageExerciseDurationInMinutes',
+    'sleepHoursPerNight',
+    'stressFrequencyPerWeek',
   ];
   return requiredKeys.every((key) => typeof data[key] === 'string');
 }
