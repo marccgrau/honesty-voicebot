@@ -1,22 +1,8 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { ClipLoader } from 'react-spinners';
-
-interface Responses {
-  fruitsVegetables: string;
-  fastFood: string;
-  waterIntake: string;
-  sugaryBeverages: string;
-  alcohol: string;
-  exerciseDays: string;
-  exerciseDuration: string;
-  sleepHours: string;
-  stressFrequency: string;
-}
-
-interface PrefilledResultsFormProps {
-  sessionId: string;
-}
+import { PrefilledResultsFormProps } from '../types/components';
+import { Responses } from '../types/responses';
 
 const PrefilledResultsForm: React.FC<PrefilledResultsFormProps> = ({ sessionId }) => {
   const [responses, setResponses] = useState<Responses | null>(null);

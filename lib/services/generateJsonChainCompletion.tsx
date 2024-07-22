@@ -5,24 +5,13 @@ import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts
 import { RunnableWithMessageHistory, RunnableMap } from '@langchain/core/runnables';
 import { UpstashRedisChatMessageHistory } from '@langchain/community/stores/message/upstash_redis';
 import { saveResponses, getResponses } from '../utils/mongoUtil';
+import { Responses, Response } from '../../types/responses';
 
 const UPSTASH_REDIS_REST_URL = process.env.UPSTASH_REDIS_REST_URL!;
 const UPSTASH_REDIS_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN!;
 
 if (!UPSTASH_REDIS_REST_URL || !UPSTASH_REDIS_REST_TOKEN) {
   throw new Error('Upstash Redis environment variables are not set.');
-}
-
-export interface Responses {
-  fruitsVegetables: string;
-  fastFood: string;
-  waterIntake: string;
-  sugaryBeverages: string;
-  alcohol: string;
-  exerciseDays: string;
-  exerciseDuration: string;
-  sleepHours: string;
-  stressFrequency: string;
 }
 
 const initialResponses: Responses = {
@@ -58,11 +47,6 @@ Ask the user the following question:
 - If you get "All questions have been answered." instead of a next question, thank the user for his time and end the conversation.
 - Do not engage in any other conversation after all questions have been answered.
 `;
-
-interface Response {
-  question: string;
-  answer: string;
-}
 
 class QuestionManager {
   private questions: { [key in keyof Responses]: Response };
@@ -278,9 +262,7 @@ function fetchParallelRunnableConvoAndJsonFill(
   return finalChain;
 }
 
-// TODO: add message history filtering
-
-// Main function to generate chain completion
+// Main function to generate json chain completion
 async function generateCompletion(transcription: string, sessionId: string): Promise<any> {
   try {
     // Load existing responses from MongoDB

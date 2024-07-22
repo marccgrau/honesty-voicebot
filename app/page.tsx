@@ -12,21 +12,7 @@ import { SpotifyTrack } from '../components/tools/Spotify';
 import { ClockComponent } from '../components/tools/Clock';
 import { config } from '../lib/config';
 import Image from 'next/image';
-
-interface Message {
-  rateLimitReached: any;
-  transcription?: string;
-  audio?: string;
-  result?: string;
-  weather?: string;
-  spotify?: string;
-  time?: string;
-}
-
-interface UIComponent {
-  component: string;
-  data: any;
-}
+import { UIComponent, Message } from '../types/components';
 
 const Main = () => {
   const { action } = useActions<typeof AI>();

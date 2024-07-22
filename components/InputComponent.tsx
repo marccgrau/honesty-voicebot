@@ -1,16 +1,7 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import { FaMicrophone } from 'react-icons/fa';
-
-interface InputComponentProps {
-  onSubmit: (formData: FormData) => void;
-  useTTS: boolean;
-  useInternet: boolean;
-  usePhotos: boolean;
-  useChainMode: boolean;
-  useJsonMode: boolean;
-  useAgentMode: boolean;
-}
+import { InputComponentProps } from '../types/components';
 
 const InputComponent: React.FC<InputComponentProps> = ({
   onSubmit,
