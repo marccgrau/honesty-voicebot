@@ -2,32 +2,17 @@
 import { useState, useEffect } from 'react';
 import { useActions, readStreamableValue } from 'ai/rsc';
 import { type AI } from './action';
-import { Settings } from './components/Settings';
-import { AttributionComponent } from './components/AttributionComponent';
-import { MobileNotSupported } from './components/Mobile';
-import InputComponent from './components/InputComponent';
-import DescriptionCard from './components/DescriptionCard';
-import { WeatherData } from './components/tools/Weather';
-import { SpotifyTrack } from './components/tools/Spotify';
-import { ClockComponent } from './components/tools/Clock';
-import { config } from './config';
+import { Settings } from '../components/Settings';
+import { AttributionComponent } from '../components/AttributionComponent';
+import { MobileNotSupported } from '../components/Mobile';
+import InputComponent from '../components/InputComponent';
+import DescriptionCard from '../components/DescriptionCard';
+import { WeatherData } from '../components/tools/Weather';
+import { SpotifyTrack } from '../components/tools/Spotify';
+import { ClockComponent } from '../components/tools/Clock';
+import { config } from '../lib/config';
 import Image from 'next/image';
-import PrefilledResultsForm from './components/PrefilledResultsForm';
-
-interface Message {
-  rateLimitReached: any;
-  transcription?: string;
-  audio?: string;
-  result?: string;
-  weather?: string;
-  spotify?: string;
-  time?: string;
-}
-
-interface UIComponent {
-  component: string;
-  data: any;
-}
+import { UIComponent, Message } from '../types/components';
 
 const Main = () => {
   const { action } = useActions<typeof AI>();

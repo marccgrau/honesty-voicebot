@@ -3,8 +3,10 @@ import Groq from 'groq-sdk';
 import OpenAI from 'openai';
 import { config } from '../config';
 import { traceable } from 'langsmith/traceable';
+
 const groq = new Groq();
 const openai = new OpenAI();
+
 export const transcribeAudio = traceable(
   async (audioBlob: Blob, timestamp: number) => {
     try {

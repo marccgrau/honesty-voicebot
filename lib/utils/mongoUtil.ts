@@ -1,6 +1,6 @@
 import { MongoClient, ServerApiVersion } from 'mongodb';
 import { config } from '../config';
-import { Responses } from '../utils/generateJsonChainCompletion';
+import { Responses } from '../services/generateJsonChainCompletion';
 
 // Create a MongoClient instance and connect once
 const client = new MongoClient(config.mongoUri, {

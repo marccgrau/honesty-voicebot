@@ -1,22 +1,22 @@
 import 'server-only';
 import { createAI, createStreamableValue } from 'ai/rsc';
-import { config } from './config';
+import { config } from '../lib/config';
 import dotenv from 'dotenv';
 import { headers } from 'next/headers';
-import { transcribeAudio } from './utils/transcribeAudio';
-import { generateTTS } from './utils/generateTTS';
+import { transcribeAudio } from '../lib/services/transcribeAudio';
+import { generateTTS } from '../lib/services/generateTTS';
 import {
   processImageWithGPT4o,
   processImageWithLllavaOnFalAI,
   processImageWithGoogleGenerativeAI,
-} from './utils/processImage';
-import { generateChatCompletion } from './utils/generateChatCompletion';
-import { answerEngine } from './utils/answerEngine';
-import { chatCompletionWithTools } from './utils/chatCompletionWithTools';
-import { initializeRateLimit, checkRateLimit } from './utils/rateLimiting';
-import { generateChainCompletion } from './utils/generateChainCompletion';
-import { generateJsonChainCompletion } from './utils/generateJsonChainCompletion';
-import { generateAgentCompletion } from './utils/generateAgentCompletion';
+} from '../lib/services/processImage';
+import { generateChatCompletion } from '../lib/services/generateChatCompletion';
+import { answerEngine } from '../lib/services/answerEngine';
+import { chatCompletionWithTools } from '../lib/services/chatCompletionWithTools';
+import { initializeRateLimit, checkRateLimit } from '../lib/utils/rateLimiting';
+import { generateChainCompletion } from '../lib/services/generateChainCompletion';
+import { generateJsonChainCompletion } from '../lib/services/generateJsonChainCompletion';
+import { generateAgentCompletion } from '../lib/services/generateAgentCompletion';
 import { use } from 'react';
 
 dotenv.config();
