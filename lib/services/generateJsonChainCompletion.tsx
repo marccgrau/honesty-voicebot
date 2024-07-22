@@ -4,7 +4,7 @@ import { traceable } from 'langsmith/traceable';
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
 import { RunnableWithMessageHistory, RunnableMap } from '@langchain/core/runnables';
 import { UpstashRedisChatMessageHistory } from '@langchain/community/stores/message/upstash_redis';
-import { saveResponses, getResponses } from './mongoUtil';
+import { saveResponses, getResponses } from '../utils/mongoUtil';
 
 const UPSTASH_REDIS_REST_URL = process.env.UPSTASH_REDIS_REST_URL!;
 const UPSTASH_REDIS_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN!;

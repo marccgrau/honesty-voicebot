@@ -1,5 +1,5 @@
 import { use } from 'react';
-import { config } from '../config';
+import { config } from '../lib/config';
 
 interface SettingsProps {
   useTTS: boolean;

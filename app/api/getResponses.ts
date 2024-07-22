@@ -1,6 +1,6 @@
 // pages/api/getResponses.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getResponses } from '../utils/mongoUtil';
+import { getResponses } from '../../lib/utils/mongoUtil';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { sessionId } = req.query;

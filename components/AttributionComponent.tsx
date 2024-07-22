@@ -1,5 +1,5 @@
 import React from 'react';
-import { config } from '../config';
+import { config } from '../lib/config';
 
 interface AttributionComponentProps {
   usePhotos: boolean;
