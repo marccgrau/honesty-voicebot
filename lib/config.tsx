@@ -34,14 +34,15 @@ export const config = {
 
   // UI settings
   enableResponseTimes: false, // Display response times for each message
-  enableSettingsUIToggle: true, // Display the settings UI toggle
+  enableSettingsUIToggle: false, // Display the settings UI toggle
   enableTextToSpeechUIToggle: true, // Display the text to speech UI toggle
   enableInternetResultsUIToggle: true, // Display the internet results UI toggle
   enableUsePhotUIToggle: false, // Display the use photo UI toggle
   enableChainModeUIToggle: true, // Display the chain mode UI toggle
   enableJsonModeUIToggle: true, // Display the json mode UI toggle
   enableAgentModeUIToggle: false, // Display the agent mode UI toggle
-  useAttributionComponent: true, // Use the attribution component to display the attribution of the AI models/services used
+  useAttributionComponent: false, // Use the attribution component to display the attribution of the AI models/services used
+  enableMessageModeUIToggle: true, // Display the message mode UI toggle
 
   // Rate limiting settings
   useRateLimiting: false, // Use Upstash rate limiting to limit the number of requests per user

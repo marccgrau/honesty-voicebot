@@ -1,4 +1,5 @@
 import { Responses } from './responses';
+import { use } from 'react';
 
 export interface InputComponentProps {
   onSubmit: (formData: FormData) => void;
@@ -21,18 +22,21 @@ export interface SettingsProps {
   useChainMode: boolean;
   useJsonMode: boolean;
   useAgentMode: boolean;
+  useMessageMode: boolean;
   onTTSToggle: () => void;
   onInternetToggle: () => void;
   onPhotosToggle: () => void;
   onChainModeToggle: () => void;
   onJsonModeToggle: () => void;
   onAgentModeToggle: () => void;
+  onMessageModeToggle: () => void;
   setTTS: (useTTS: boolean) => void;
   setInternet: (useInternet: boolean) => void;
   setPhotos: (usePhotos: boolean) => void;
   setChainMode: (useChainMode: boolean) => void;
   setJsonMode: (useJsonMode: boolean) => void;
   setAgentMode: (useAgentMode: boolean) => void;
+  setMessageMode: (useMessageMode: boolean) => void;
 }
 
 export interface UIComponent {

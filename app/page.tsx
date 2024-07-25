@@ -21,7 +21,7 @@ const Main = () => {
   const [useChainMode, setUseChainMode] = useState(true);
   const [useJsonMode, setJsonMode] = useState(true);
   const [useAgentMode, setUseAgentMode] = useState(false);
-  const [useTTS, setUseTTS] = useState(false);
+  const [useTTS, setUseTTS] = useState(true);
   const [useInternet, setUseInternet] = useState(false);
   const [usePhotos, setUsePhotos] = useState(false);
   const [useSpotify, setUseSpotify] = useState('');
@@ -36,6 +36,8 @@ const Main = () => {
   const [showSettings, setShowSettings] = useState(false);
   const [conversationCompleted, setConversationCompleted] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [useMessageMode, setMessageMode] = useState(false);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
 
   useEffect(() => {
     let sessionId = localStorage.getItem('sessionId');
@@ -68,6 +70,10 @@ const Main = () => {
 
   const handleAgentModeToggle = () => {
     setUseAgentMode(!useAgentMode);
+  };
+
+  const handleMessageModeToggle = () => {
+    setMessageMode(!useMessageMode);
   };
 
   const handleSubmit = async (formData: FormData) => {
@@ -105,7 +111,9 @@ const Main = () => {
       if (message && message.audio && typeof message.audio === 'string') {
         audioResponseTime = (Date.now() - (transcriptionCompletionTime || startTime)) / 1000;
         const audio = new Audio(message.audio);
+        setIsAudioPlaying(true);
         audio.play();
+        audio.onended = () => setIsAudioPlaying(false);
       }
       if (message && message.spotify && typeof message.spotify === 'string') {
         setUseSpotify(message.spotify);
@@ -157,8 +165,12 @@ const Main = () => {
       {isMobile ? (
         <MobileNotSupported />
       ) : (
-        <div className="flex flex-1">
-          <div className="flex w-1/2 flex-col items-center justify-center p-4">
+        <div
+          className={`flex flex-1 ${useMessageMode ? 'flex-row' : 'flex-col items-center justify-center'}`}
+        >
+          <div
+            className={`flex ${useMessageMode ? 'w-1/2' : 'w-full'} flex-col items-center justify-center p-4`}
+          >
             <div className="flex flex-col items-center justify-center space-y-12">
               <DescriptionCard />
               <InputComponent
@@ -170,38 +182,63 @@ const Main = () => {
                 useJsonMode={useJsonMode}
                 useAgentMode={useAgentMode}
               />
-            </div>
-          </div>
-          <div className="mt-4 flex w-1/2 flex-col items-center px-4">
-            <div className="w-full max-w-[700px]">
-              {message && message.message && (
-                <div className="mb-4 rounded bg-gray-100 p-4 shadow-md">
-                  <p>{message.message}</p>
-                  {config.enableResponseTimes && (
-                    <p className="text-xs text-gray-500">
-                      Response time: +{message.responseTime.toFixed(2)} seconds
-                    </p>
-                  )}
+              {useTTS && isAudioPlaying && (
+                <div className="flex space-x-2">
+                  <div className="h-6 w-1 animate-pulse bg-blue-500"></div>
+                  <div
+                    className="h-6 w-1 animate-pulse bg-blue-500"
+                    style={{ animationDelay: '0.1s' }}
+                  ></div>
+                  <div
+                    className="h-6 w-1 animate-pulse bg-blue-500"
+                    style={{ animationDelay: '0.2s' }}
+                  ></div>
+                  <div
+                    className="h-6 w-1 animate-pulse bg-blue-500"
+                    style={{ animationDelay: '0.3s' }}
+                  ></div>
+                  <div
+                    className="h-6 w-1 animate-pulse bg-blue-500"
+                    style={{ animationDelay: '0.4s' }}
+                  ></div>
                 </div>
               )}
-              {currentTranscription && (
-                <div className="mb-4 rounded bg-gray-100 p-4 shadow-md">
-                  <p>{currentTranscription.transcription}</p>
-                  {config.enableResponseTimes && (
-                    <p className="text-xs text-gray-500">
-                      Transcription response time: +{currentTranscription.responseTime.toFixed(2)}{' '}
-                      seconds
-                    </p>
-                  )}
-                </div>
-              )}
-              {currentUIComponent && currentUIComponent.component === 'weather' && (
-                <WeatherData data={currentUIComponent.data} />
-              )}
-              {currentUIComponent && currentUIComponent.component === 'time' && <ClockComponent />}
-              {useSpotify && <SpotifyTrack trackId={useSpotify} width={300} height={80} />}
             </div>
           </div>
+          {useMessageMode && (
+            <div className="mt-4 flex w-1/2 flex-col items-center px-4">
+              <div className="w-full max-w-[700px]">
+                {message && message.message && (
+                  <div className="mb-4 rounded bg-gray-100 p-4 shadow-md">
+                    <p>{message.message}</p>
+                    {config.enableResponseTimes && (
+                      <p className="text-xs text-gray-500">
+                        Response time: +{message.responseTime.toFixed(2)} seconds
+                      </p>
+                    )}
+                  </div>
+                )}
+                {currentTranscription && (
+                  <div className="mb-4 rounded bg-gray-100 p-4 shadow-md">
+                    <p>{currentTranscription.transcription}</p>
+                    {config.enableResponseTimes && (
+                      <p className="text-xs text-gray-500">
+                        Transcription response time: +{currentTranscription.responseTime.toFixed(2)}{' '}
+                        seconds
+                      </p>
+                    )}
+                  </div>
+                )}
+                {currentUIComponent && currentUIComponent.component === 'weather' && (
+                  <WeatherData data={currentUIComponent.data} />
+                )}
+                {currentUIComponent && currentUIComponent.component === 'time' && (
+                  <ClockComponent />
+                )}
+                {useSpotify && <SpotifyTrack trackId={useSpotify} width={300} height={80} />}
+              </div>
+            </div>
+          )}
         </div>
       )}
       {config.enableSettingsUIToggle && (
@@ -230,18 +267,21 @@ const Main = () => {
           useChainMode={useChainMode}
           useJsonMode={useJsonMode}
           useAgentMode={useAgentMode}
+          useMessageMode={useMessageMode}
           onTTSToggle={handleTTSToggle}
           onInternetToggle={handleInternetToggle}
           onPhotosToggle={() => setUsePhotos(!usePhotos)}
           onChainModeToggle={handleChainModeToggle}
           onJsonModeToggle={handleJsonModeToggle}
           onAgentModeToggle={handleAgentModeToggle}
+          onMessageModeToggle={handleMessageModeToggle}
           setTTS={setUseTTS}
           setInternet={setUseInternet}
           setPhotos={setUsePhotos}
           setChainMode={setUseChainMode}
           setJsonMode={setJsonMode}
           setAgentMode={setUseAgentMode}
+          setMessageMode={setMessageMode}
         />
       )}
       {config.useAttributionComponent && (
