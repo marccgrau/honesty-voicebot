@@ -130,13 +130,15 @@ const Main = () => {
     if (conversationCompleted && sessionId) {
       // Redirect to the validation page with the sessionId as query parameter
       console.log('Redirecting to validation page');
-      router.push(`/validation?sessionId=${sessionId}`);
+      //router.push(`/validation?sessionId=${sessionId}`);
+      router.push('/thankyou');
     }
   };
   useEffect(() => {
     if (conversationCompleted && sessionId) {
       // Redirect to the validation page with the sessionId as query parameter
-      router.push(`/validation?sessionId=${sessionId}`);
+      //router.push(`/validation?sessionId=${sessionId}`);
+      router.push('/thankyou');
     }
   }, [conversationCompleted, sessionId, router]);
   useEffect(() => {

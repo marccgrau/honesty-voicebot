@@ -59,4 +59,7 @@ export const config = {
   mongoUri: process.env.MONGODB_URI!,
   dbName: process.env.MONGODB_DBNAME!,
   collectionName: process.env.MONGODB_COLLECTION!,
+
+  // Experiment settings
+  QUESTIONNAIRE_CODE: process.env.QUESTIONNAIRE_CODE!,
 };
