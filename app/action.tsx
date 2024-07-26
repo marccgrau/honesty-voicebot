@@ -130,9 +130,13 @@ async function handleChainResponseGeneration(responseText: string, sessionId: st
   }
 }
 
-async function handleJsonChainResponseGeneration(responseText: string, sessionId: string) {
+async function handleJsonChainResponseGeneration(
+  responseText: string,
+  sessionId: string,
+  prolificPid: string,
+) {
   try {
-    const completion = await generateJsonChainCompletion(responseText, sessionId);
+    const completion = await generateJsonChainCompletion(responseText, sessionId, prolificPid);
     return completion;
   } catch (error) {
     console.error('Error in json chain response generation:', error);
@@ -165,6 +169,7 @@ async function action(obj: FormData): Promise<any> {
       const formData = obj;
       const audioBlob = formData.get('audio');
       const sessionId = formData.get('sessionId') as string;
+      const prolificPid = formData.get('prolificPid') as string;
       const useTTS = formData.get('useTTS') === 'true';
       const useInternet = formData.get('useInternet') === 'true';
       const usePhotos = formData.get('usePhotos') === 'true';
@@ -188,7 +193,8 @@ async function action(obj: FormData): Promise<any> {
 
       if (useChainMode && useJsonMode) {
         console.log('Using both chain and json modes');
-        const response = (await handleJsonChainResponseGeneration(transcription, sessionId)) || '';
+        const response =
+          (await handleJsonChainResponseGeneration(transcription, sessionId, prolificPid)) || '';
         responseText = response.responseText;
         streamable.update({ allQuestionsAnswered: response.allQuestionsAnswered });
       }

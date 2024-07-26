@@ -21,13 +21,18 @@ async function connectDB() {
   return db;
 }
 
-export async function saveResponses(sessionId: string, jsonData: Responses): Promise<void> {
+export async function saveResponses(
+  sessionId: string,
+  prolificPid: string,
+  jsonData: Responses,
+): Promise<void> {
   try {
     const database = await connectDB();
     await database
       .collection('responses')
       .updateOne(
         { sessionId },
+        { prolificPid },
         { $set: { data: JSON.parse(JSON.stringify(jsonData)) } },
         { upsert: true },
       );
@@ -37,13 +42,18 @@ export async function saveResponses(sessionId: string, jsonData: Responses): Pro
   }
 }
 
-export async function saveFinalResponses(sessionId: string, jsonData: Responses): Promise<void> {
+export async function saveFinalResponses(
+  sessionId: string,
+  prolificPid: string,
+  jsonData: Responses,
+): Promise<void> {
   try {
     const database = await connectDB();
     await database
       .collection('final_responses')
       .updateOne(
         { sessionId },
+        { prolificPid },
         { $set: { data: JSON.parse(JSON.stringify(jsonData)) } },
         { upsert: true },
       );

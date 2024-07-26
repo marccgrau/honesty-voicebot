@@ -273,7 +273,11 @@ function fetchParallelRunnableConvoAndJsonFill(
 }
 
 // Main function to generate json chain completion
-async function generateCompletion(transcription: string, sessionId: string): Promise<any> {
+async function generateCompletion(
+  transcription: string,
+  sessionId: string,
+  prolificPid: string,
+): Promise<any> {
   try {
     // Load existing responses from MongoDB
     let responses: Responses = ((await getResponses(sessionId)) as Responses) || initialResponses;
@@ -304,7 +308,7 @@ async function generateCompletion(transcription: string, sessionId: string): Pro
     responses = completion.json?.lc_kwargs?.content || initialResponses;
 
     // Save updated responses to MongoDB
-    await saveResponses(sessionId, responses);
+    await saveResponses(sessionId, prolificPid, responses);
 
     if (nextQuestion === 'All questions have been answered.') {
       return {
@@ -325,11 +329,11 @@ async function generateCompletion(transcription: string, sessionId: string): Pro
 
 // Exporting the main function with traceability
 export const generateJsonChainCompletion = traceable(
-  async (transcription: string, sessionId: string): Promise<any> => {
+  async (transcription: string, sessionId: string, prolificPid: string): Promise<any> => {
     if (config.inferenceModelProvider !== 'openai') {
       throw new Error('This functionality is not yet available for the specified provider.');
     }
-    return generateCompletion(transcription, sessionId);
+    return generateCompletion(transcription, sessionId, prolificPid);
   },
   { name: 'generateJsonChainCompletion' },
 );

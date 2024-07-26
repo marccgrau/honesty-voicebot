@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useActions, readStreamableValue } from 'ai/rsc';
 import { type AI } from './action';
 import { Settings } from '../components/Settings';
@@ -17,6 +17,7 @@ import { UIComponent, Message } from '../types/components';
 
 const Main = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { action } = useActions<typeof AI>();
   const [useChainMode, setUseChainMode] = useState(true);
   const [useJsonMode, setJsonMode] = useState(true);
@@ -38,6 +39,7 @@ const Main = () => {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [useMessageMode, setMessageMode] = useState(false);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [prolificPid, setProlificPid] = useState<string | null>(null);
 
   useEffect(() => {
     let sessionId = localStorage.getItem('sessionId');
@@ -46,7 +48,13 @@ const Main = () => {
       localStorage.setItem('sessionId', sessionId);
     }
     setSessionId(sessionId);
-  }, []);
+
+    // Extract PROLIFIC_PID from the URL
+    const pid = searchParams.get('PROLIFIC_PID');
+    if (pid) {
+      setProlificPid(pid);
+    }
+  }, [searchParams]);
 
   const handleSettingsClick = () => {
     setShowSettings(!showSettings);
@@ -138,14 +146,14 @@ const Main = () => {
     if (conversationCompleted && sessionId) {
       // Redirect to the validation page with the sessionId as query parameter
       console.log('Redirecting to validation page');
-      //router.push(`/validation?sessionId=${sessionId}`);
+      //router.push(`/validation?sessionId=${sessionId}?prolificPid=${prolificPid}`);
       router.push('/thankyou');
     }
   };
   useEffect(() => {
     if (conversationCompleted && sessionId) {
       // Redirect to the validation page with the sessionId as query parameter
-      //router.push(`/validation?sessionId=${sessionId}`);
+      //router.push(`/validation?sessionId=${sessionId}?prolificPid=${prolificPid}`);
       router.push('/thankyou');
     }
   }, [conversationCompleted, sessionId, router]);
@@ -181,6 +189,7 @@ const Main = () => {
                 useChainMode={useChainMode}
                 useJsonMode={useJsonMode}
                 useAgentMode={useAgentMode}
+                prolificPid={prolificPid || ''}
               />
               {useTTS && isAudioPlaying && (
                 <div className="flex space-x-2">
