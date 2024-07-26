@@ -11,7 +11,6 @@ const InputComponent: React.FC<InputComponentProps> = ({
   useChainMode,
   useJsonMode,
   useAgentMode,
-  prolificPid,
 }) => {
   const [recording, setRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -63,8 +62,9 @@ const InputComponent: React.FC<InputComponentProps> = ({
         const sessionId = localStorage.getItem('sessionId');
         formData.append('sessionId', sessionId!);
 
+        const prolificPid = localStorage.getItem('prolificPid');
         if (prolificPid) {
-          formData.append('PROLIFIC_PID', prolificPid);
+          formData.append('prolificPid', prolificPid);
         }
 
         onSubmit(formData);

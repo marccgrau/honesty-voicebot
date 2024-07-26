@@ -50,9 +50,10 @@ const Main = () => {
     setSessionId(sessionId);
 
     // Extract PROLIFIC_PID from the URL
-    const pid = searchParams.get('PROLIFIC_PID');
-    if (pid) {
-      setProlificPid(pid);
+    const prolificPid = searchParams.get('PROLIFIC_PID');
+    if (prolificPid) {
+      setProlificPid(prolificPid);
+      localStorage.setItem('prolificPid', prolificPid);
     }
   }, [searchParams]);
 
@@ -189,7 +190,6 @@ const Main = () => {
                 useChainMode={useChainMode}
                 useJsonMode={useJsonMode}
                 useAgentMode={useAgentMode}
-                prolificPid={prolificPid || ''}
               />
               {useTTS && isAudioPlaying && (
                 <div className="flex space-x-2">

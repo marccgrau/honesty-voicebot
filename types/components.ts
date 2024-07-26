@@ -9,7 +9,6 @@ export interface InputComponentProps {
   useChainMode: boolean;
   useJsonMode: boolean;
   useAgentMode: boolean;
-  prolificPid: string;
 }
 
 export interface PrefilledResultsFormProps {

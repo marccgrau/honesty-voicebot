@@ -28,14 +28,16 @@ export async function saveResponses(
 ): Promise<void> {
   try {
     const database = await connectDB();
-    await database
-      .collection('responses')
-      .updateOne(
-        { sessionId },
-        { prolificPid },
-        { $set: { data: JSON.parse(JSON.stringify(jsonData)) } },
-        { upsert: true },
-      );
+    await database.collection('responses').updateOne(
+      { sessionId },
+      {
+        $set: {
+          data: JSON.parse(JSON.stringify(jsonData)),
+        },
+        $setOnInsert: { prolificPid },
+      },
+      { upsert: true },
+    );
   } catch (error) {
     console.error('Error saving JSON to MongoDB:', error);
     throw error;
@@ -49,14 +51,16 @@ export async function saveFinalResponses(
 ): Promise<void> {
   try {
     const database = await connectDB();
-    await database
-      .collection('final_responses')
-      .updateOne(
-        { sessionId },
-        { prolificPid },
-        { $set: { data: JSON.parse(JSON.stringify(jsonData)) } },
-        { upsert: true },
-      );
+    await database.collection('final_responses').updateOne(
+      { sessionId },
+      {
+        $set: {
+          data: JSON.parse(JSON.stringify(jsonData)),
+        },
+        $setOnInsert: { prolificPid },
+      },
+      { upsert: true },
+    );
   } catch (error) {
     console.error('Error saving final responses to MongoDB:', error);
     throw error;
