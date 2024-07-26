@@ -1,7 +1,8 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useActions, readStreamableValue } from 'ai/rsc';
+import { ClipLoader } from 'react-spinners';
 import { type AI } from './action';
 import { Settings } from '../components/Settings';
 import { AttributionComponent } from '../components/AttributionComponent';
@@ -15,7 +16,7 @@ import { config } from '../lib/config';
 import Image from 'next/image';
 import { UIComponent, Message } from '../types/components';
 
-const Main = () => {
+const MainContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { action } = useActions<typeof AI>();
@@ -307,4 +308,17 @@ const Main = () => {
     </div>
   );
 };
+
+const Main = () => (
+  <Suspense
+    fallback={
+      <div className="flex h-screen w-screen items-center justify-center">
+        <ClipLoader size={50} color="#123abc" />
+      </div>
+    }
+  >
+    <MainContent />
+  </Suspense>
+);
+
 export default Main;
