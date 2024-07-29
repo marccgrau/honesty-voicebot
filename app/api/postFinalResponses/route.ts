@@ -3,7 +3,7 @@ import { saveFinalResponses } from '../../../lib/utils/mongoUtil';
 import { Responses } from '../../../types/responses';
 
 export async function POST(req: NextRequest) {
-  const { sessionId, prolificPid, responses } = await req.json();
+  const { sessionId, prolificPid, ttsVoice, responses } = await req.json();
 
   if (!sessionId || typeof sessionId !== 'string') {
     return NextResponse.json({ error: 'Invalid sessionId' }, { status: 400 });
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    await saveFinalResponses(sessionId, prolificPid, responses as Responses);
+    await saveFinalResponses(sessionId, prolificPid, ttsVoice, responses as Responses);
     return NextResponse.json({ message: 'Final responses saved successfully' });
   } catch (error) {
     console.error('Error saving final responses:', error);
