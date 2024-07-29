@@ -5,10 +5,10 @@ import { traceable } from 'langsmith/traceable';
 const openai = new OpenAI();
 
 export const generateTTS = traceable(
-  async (responseText: string) => {
+  async (responseText: string, ttsVoice: string) => {
     const mp3 = await openai.audio.speech.create({
       model: config.ttsModel,
-      voice: config.ttsvoice as 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer',
+      voice: ttsVoice as 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer',
       input: responseText,
     });
     const buffer = Buffer.from(await mp3.arrayBuffer());

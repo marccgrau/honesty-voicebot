@@ -134,9 +134,15 @@ async function handleJsonChainResponseGeneration(
   responseText: string,
   sessionId: string,
   prolificPid: string,
+  ttsVoice: string,
 ) {
   try {
-    const completion = await generateJsonChainCompletion(responseText, sessionId, prolificPid);
+    const completion = await generateJsonChainCompletion(
+      responseText,
+      sessionId,
+      prolificPid,
+      ttsVoice,
+    );
     return completion;
   } catch (error) {
     console.error('Error in json chain response generation:', error);
@@ -176,6 +182,7 @@ async function action(obj: FormData): Promise<any> {
       const useChainMode = formData.get('useChainMode') === 'true';
       const useJsonMode = formData.get('useJsonMode') === 'true';
       const useAgentMode = formData.get('useAgentMode') === 'true';
+      const ttsVoice = formData.get('ttsVoice') as string;
 
       if (!(audioBlob instanceof Blob)) throw new Error('No audio detected');
 
@@ -194,7 +201,12 @@ async function action(obj: FormData): Promise<any> {
       if (useChainMode && useJsonMode) {
         console.log('Using both chain and json modes');
         const response =
-          (await handleJsonChainResponseGeneration(transcription, sessionId, prolificPid)) || '';
+          (await handleJsonChainResponseGeneration(
+            transcription,
+            sessionId,
+            prolificPid,
+            ttsVoice,
+          )) || '';
         responseText = response.responseText;
         streamable.update({ allQuestionsAnswered: response.allQuestionsAnswered });
       }
@@ -211,7 +223,7 @@ async function action(obj: FormData): Promise<any> {
 
       streamable.update({ result: responseText });
       if (useTTS) {
-        streamable.update({ audio: await generateTTS(responseText) });
+        streamable.update({ audio: await generateTTS(responseText, ttsVoice) });
       }
       streamable.done({ status: 'done' });
     } catch (error) {

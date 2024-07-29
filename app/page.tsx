@@ -41,6 +41,7 @@ const MainContent = () => {
   const [useMessageMode, setMessageMode] = useState(false);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [prolificPid, setProlificPid] = useState<string | null>(null);
+  const [ttsVoice, setTtsVoice] = useState(config.ttsVoice);
 
   useEffect(() => {
     let sessionId = localStorage.getItem('sessionId');
@@ -56,6 +57,13 @@ const MainContent = () => {
       setProlificPid(prolificPid);
       localStorage.setItem('prolificPid', prolificPid);
     }
+
+    let ttsVoice = localStorage.getItem('ttsVoice');
+    if (!ttsVoice) {
+      ttsVoice = config.ttsVoice;
+      localStorage.setItem('ttsVoice', ttsVoice);
+    }
+    setTtsVoice(ttsVoice);
   }, [searchParams]);
 
   const handleSettingsClick = () => {
@@ -148,14 +156,14 @@ const MainContent = () => {
     if (conversationCompleted && sessionId) {
       // Redirect to the validation page with the sessionId as query parameter
       console.log('Redirecting to validation page');
-      //router.push(`/validation?sessionId=${sessionId}?prolificPid=${prolificPid}`);
+      //router.push(`/validation?sessionId=${sessionId}?prolificPid=${prolificPid}?ttsVoice=${ttsVoice}`);
       router.push('/thankyou');
     }
   };
   useEffect(() => {
     if (conversationCompleted && sessionId) {
       // Redirect to the validation page with the sessionId as query parameter
-      //router.push(`/validation?sessionId=${sessionId}?prolificPid=${prolificPid}`);
+      //router.push(`/validation?sessionId=${sessionId}?prolificPid=${prolificPid}?ttsVoice=${ttsVoice}`);
       router.push('/thankyou');
     }
   }, [conversationCompleted, sessionId, router]);

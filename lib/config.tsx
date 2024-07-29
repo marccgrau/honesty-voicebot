@@ -22,7 +22,7 @@ export const config = {
   // TTS settings
   ttsModelProvider: 'openai', // only openai supported for now...
   ttsModel: 'tts-1', // only openai supported for now...s
-  ttsvoice: getRandomTtsVoice(), // only openai supported for now... [alloy, echo, fable, onyx, nova, and shimmer]
+  ttsVoice: getRandomTtsVoice(), // only openai supported for now... [alloy, echo, fable, onyx, nova, and shimmer]
 
   // OPTIONAL:Vision settings
   visionModelProvider: 'google', // 'openai' or 'fal.ai' or 'google'

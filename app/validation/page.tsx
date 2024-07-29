@@ -9,6 +9,7 @@ const ValidationPageContent = () => {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('sessionId');
   const prolificPid = searchParams.get('prolificPid');
+  const ttsVoice = searchParams.get('ttsVoice');
   const [responses, setResponses] = useState<Responses | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -52,6 +53,7 @@ const ValidationPageContent = () => {
         body: JSON.stringify({
           sessionId,
           prolificPid,
+          ttsVoice,
           responses: updatedResponses,
         }),
       });

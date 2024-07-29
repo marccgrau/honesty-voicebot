@@ -24,6 +24,7 @@ async function connectDB() {
 export async function saveResponses(
   sessionId: string,
   prolificPid: string,
+  ttsVoice: string,
   jsonData: Responses,
 ): Promise<void> {
   try {
@@ -34,7 +35,7 @@ export async function saveResponses(
         $set: {
           data: JSON.parse(JSON.stringify(jsonData)),
         },
-        $setOnInsert: { prolificPid },
+        $setOnInsert: { prolificPid, ttsVoice },
       },
       { upsert: true },
     );
@@ -47,6 +48,7 @@ export async function saveResponses(
 export async function saveFinalResponses(
   sessionId: string,
   prolificPid: string,
+  ttsVoice: string,
   jsonData: Responses,
 ): Promise<void> {
   try {
@@ -57,7 +59,7 @@ export async function saveFinalResponses(
         $set: {
           data: JSON.parse(JSON.stringify(jsonData)),
         },
-        $setOnInsert: { prolificPid },
+        $setOnInsert: { prolificPid, ttsVoice },
       },
       { upsert: true },
     );

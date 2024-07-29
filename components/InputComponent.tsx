@@ -67,6 +67,11 @@ const InputComponent: React.FC<InputComponentProps> = ({
           formData.append('prolificPid', prolificPid);
         }
 
+        const ttsVoice = localStorage.getItem('ttsVoice');
+        if (ttsVoice) {
+          formData.append('ttsVoice', ttsVoice);
+        }
+
         onSubmit(formData);
         chunksRef.current = [];
       });
