@@ -1,6 +1,5 @@
 import { ChatOpenAI } from '@langchain/openai';
 import { config } from '../config';
-import { traceable } from 'langsmith/traceable';
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
 import { RunnableWithMessageHistory, RunnableMap } from '@langchain/core/runnables';
 import { UpstashRedisChatMessageHistory } from '@langchain/community/stores/message/upstash_redis';
@@ -329,17 +328,14 @@ async function generateCompletion(
 }
 
 // Exporting the main function with traceability
-export const generateJsonChainCompletion = traceable(
-  async (
-    transcription: string,
-    sessionId: string,
-    prolificPid: string,
-    ttsVoice: string,
-  ): Promise<any> => {
-    if (config.inferenceModelProvider !== 'openai') {
-      throw new Error('This functionality is not yet available for the specified provider.');
-    }
-    return generateCompletion(transcription, sessionId, prolificPid, ttsVoice);
-  },
-  { name: 'generateJsonChainCompletion' },
-);
+export const generateJsonChainCompletion = async (
+  transcription: string,
+  sessionId: string,
+  prolificPid: string,
+  ttsVoice: string,
+): Promise<any> => {
+  if (config.inferenceModelProvider !== 'openai') {
+    throw new Error('This functionality is not yet available for the specified provider.');
+  }
+  return generateCompletion(transcription, sessionId, prolificPid, ttsVoice);
+};

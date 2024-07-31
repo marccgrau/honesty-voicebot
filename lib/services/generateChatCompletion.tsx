@@ -2,7 +2,6 @@ import { HumanMessage } from '@langchain/core/messages';
 import { ChatOpenAI } from '@langchain/openai';
 import Groq from 'groq-sdk';
 import { config } from '../config';
-import { traceable } from 'langsmith/traceable';
 
 const groq = new Groq();
 
@@ -58,7 +57,4 @@ async function chatCompletion(responseText: string): Promise<string> {
   return completionText;
 }
 
-// Exporting the main function with traceability
-export const generateChatCompletion = traceable(chatCompletion, {
-  name: 'generateChatCompletion',
-});
+export const generateChatCompletion = chatCompletion;

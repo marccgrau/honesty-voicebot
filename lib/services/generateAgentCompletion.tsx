@@ -4,7 +4,6 @@ import { ChatOpenAI } from '@langchain/openai';
 import { END, MemorySaver, StateGraph, StateGraphArgs, START } from '@langchain/langgraph';
 import { AIMessage, BaseMessage, HumanMessage } from '@langchain/core/messages';
 // import { saveJson, getJson } from '../utils/mongoUtil';
-import { traceable } from 'langsmith/traceable';
 
 // Define the state interface which includes both messages and responses
 interface AgentState {
@@ -192,12 +191,12 @@ const questionNode = async (state: AgentState): Promise<AgentState | typeof END>
 // }
 
 // // Exporting the main function with traceability
-export const generateAgentCompletion = traceable(
-  async (transcription: string, sessionId: string): Promise<any> => {
-    if (config.inferenceModelProvider !== 'openai') {
-      throw new Error('This functionality is not yet available for the specified provider.');
-    }
-    return null;
-  },
-  { name: 'generateAgentCompletion' },
-);
+// export const generateAgentCompletion = traceable(
+//   async (transcription: string, sessionId: string): Promise<any> => {
+//     if (config.inferenceModelProvider !== 'openai') {
+//       throw new Error('This functionality is not yet available for the specified provider.');
+//     }
+//     return null;
+//   },
+//   { name: 'generateAgentCompletion' },
+// );

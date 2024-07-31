@@ -2,7 +2,6 @@ import { HumanMessage, AIMessage } from '@langchain/core/messages';
 import { ChatOpenAI } from '@langchain/openai';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { config } from '../config';
-import { traceable } from 'langsmith/traceable';
 import * as fal from '@fal-ai/serverless-client';
 
 export const processImageWithGPT4o = async (imageFile: File, text: string): Promise<string> => {
@@ -29,26 +28,26 @@ export const processImageWithGPT4o = async (imageFile: File, text: string): Prom
   return res?.lc_kwargs?.content || "Sorry, I can't do that yet.";
 };
 
-export const processImageWithLllavaOnFalAI = traceable(
-  async (imageFile: File, text: string): Promise<string> => {
-    const imageData = await imageFile.arrayBuffer();
-    const imageBase64 = Buffer.from(imageData).toString('base64');
-    const result: { output: string } = await fal.subscribe(`fal-ai/${config.visionModel}`, {
-      input: {
-        image_url: `data:image/jpeg;base64,${imageBase64}`,
-        prompt: `Respond in one sentence based on this image and the following text and image ${text}`,
-      },
-      logs: true,
-      onQueueUpdate: (update) => {
-        if (update.status === 'IN_PROGRESS' && update.logs) {
-          update.logs.map((log) => log.message).forEach(console.log);
-        }
-      },
-    });
-    return result.output;
-  },
-  { name: 'processImageWithLllavaOnFalAI' },
-);
+export const processImageWithLllavaOnFalAI = async (
+  imageFile: File,
+  text: string,
+): Promise<string> => {
+  const imageData = await imageFile.arrayBuffer();
+  const imageBase64 = Buffer.from(imageData).toString('base64');
+  const result: { output: string } = await fal.subscribe(`fal-ai/${config.visionModel}`, {
+    input: {
+      image_url: `data:image/jpeg;base64,${imageBase64}`,
+      prompt: `Respond in one sentence based on this image and the following text and image ${text}`,
+    },
+    logs: true,
+    onQueueUpdate: (update) => {
+      if (update.status === 'IN_PROGRESS' && update.logs) {
+        update.logs.map((log) => log.message).forEach(console.log);
+      }
+    },
+  });
+  return result.output;
+};
 
 export const processImageWithGoogleGenerativeAI = async (
   imageFile: File,

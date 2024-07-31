@@ -48,7 +48,7 @@ export const config = {
   useRateLimiting: false, // Use Upstash rate limiting to limit the number of requests per user
 
   // Tracing with Langchain
-  useLangSmith: true, // Use LangSmith by Langchain to trace the execution of the functions in the config.tsx set to true to use.
+  useLangSmith: false, // Use LangSmith by Langchain to trace the execution of the functions in the config.tsx set to true to use.
 
   // Set model temperature
   modelTemperature: 0.7,

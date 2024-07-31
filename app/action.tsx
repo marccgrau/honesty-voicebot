@@ -16,8 +16,6 @@ import { chatCompletionWithTools } from '../lib/services/chatCompletionWithTools
 import { initializeRateLimit, checkRateLimit } from '../lib/utils/rateLimiting';
 import { generateChainCompletion } from '../lib/services/generateChainCompletion';
 import { generateJsonChainCompletion } from '../lib/services/generateJsonChainCompletion';
-import { generateAgentCompletion } from '../lib/services/generateAgentCompletion';
-import { use } from 'react';
 
 dotenv.config();
 
@@ -152,8 +150,8 @@ async function handleJsonChainResponseGeneration(
 
 async function handleAgentResponseGeneration(responseText: string, sessionId: string) {
   try {
-    const completion = await generateAgentCompletion(responseText, sessionId);
-    return completion;
+    //const completion = await generateAgentCompletion(responseText, sessionId);
+    return null;
   } catch (error) {
     console.error('Error in agent response generation:', error);
     throw error;
@@ -177,11 +175,11 @@ async function action(obj: FormData): Promise<any> {
       const sessionId = formData.get('sessionId') as string;
       const prolificPid = formData.get('prolificPid') as string;
       const useTTS = formData.get('useTTS') === 'true';
-      const useInternet = formData.get('useInternet') === 'true';
-      const usePhotos = formData.get('usePhotos') === 'true';
+      const useInternet = formData.get('useInternet') === 'false';
+      const usePhotos = formData.get('usePhotos') === 'false';
       const useChainMode = formData.get('useChainMode') === 'true';
       const useJsonMode = formData.get('useJsonMode') === 'true';
-      const useAgentMode = formData.get('useAgentMode') === 'true';
+      const useAgentMode = formData.get('useAgentMode') === 'false';
       const ttsVoice = formData.get('ttsVoice') as string;
 
       if (!(audioBlob instanceof Blob)) throw new Error('No audio detected');
@@ -215,7 +213,7 @@ async function action(obj: FormData): Promise<any> {
         responseText = (await handleChainResponseGeneration(transcription, sessionId)) || '';
       }
 
-      if (!responseText) {
+      if (!responseText && !useJsonMode) {
         responseText = (await handleResponseGeneration(useInternet, transcription)) || '';
       }
 
