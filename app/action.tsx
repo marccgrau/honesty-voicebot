@@ -5,16 +5,7 @@ import dotenv from 'dotenv';
 import { headers } from 'next/headers';
 import { transcribeAudio } from '../lib/services/transcribeAudio';
 import { generateTTS } from '../lib/services/generateTTS';
-import {
-  processImageWithGPT4o,
-  processImageWithLllavaOnFalAI,
-  processImageWithGoogleGenerativeAI,
-} from '../lib/services/processImage';
-import { generateChatCompletion } from '../lib/services/generateChatCompletion';
-import { answerEngine } from '../lib/services/answerEngine';
-import { chatCompletionWithTools } from '../lib/services/chatCompletionWithTools';
 import { initializeRateLimit, checkRateLimit } from '../lib/utils/rateLimiting';
-import { generateChainCompletion } from '../lib/services/generateChainCompletion';
 import { generateJsonChainCompletion } from '../lib/services/generateJsonChainCompletion';
 
 dotenv.config();
@@ -48,90 +39,11 @@ async function handleTranscription(audioBlob: Blob) {
   }
 }
 
-async function handleImageProcessing(
-  usePhotos: boolean,
-  formData: FormData,
-  transcription: string,
-) {
-  if (usePhotos) {
-    const image = formData.get('image');
-    if (image instanceof File) {
-      try {
-        let result;
-        switch (config.visionModelProvider) {
-          case 'fal.ai':
-            result = await processImageWithLllavaOnFalAI(image, transcription);
-            break;
-          case 'google':
-            result = await processImageWithGoogleGenerativeAI(image, transcription);
-            break;
-          default:
-            result = await processImageWithGPT4o(image, transcription);
-        }
-        console.log('Image processing successful:', result);
-        return result;
-      } catch (error) {
-        console.error('Error in image processing:', error);
-        throw error;
-      }
-    } else {
-      console.warn('No image file found in formData.');
-      return 'You might have forgotten to upload an image';
-    }
-  }
-  return null;
-}
-
-async function handleResponseGeneration(useInternet: boolean, transcription: string) {
-  try {
-    let result;
-    if (useInternet) {
-      result = await answerEngine(transcription);
-    } else {
-      result = await generateChatCompletion(transcription);
-    }
-    return result;
-  } catch (error) {
-    console.error('Error in response generation:', error);
-    throw error;
-  }
-}
-
-async function handleToolsResponse(responseText: string, streamable: any) {
-  const tool_results = await chatCompletionWithTools(responseText);
-  if (tool_results?.uiComponent) {
-    switch (tool_results.uiComponent.component) {
-      case 'weather':
-        streamable.update({ weather: tool_results.uiComponent.data });
-        break;
-      case 'spotify':
-        streamable.update({ spotify: tool_results.uiComponent.data });
-        break;
-      case 'time':
-        responseText = tool_results.uiComponent.data;
-        streamable.update({ time: tool_results.uiComponent.data });
-        break;
-      default:
-        streamable.update({ message: tool_results?.message });
-    }
-  }
-  return responseText;
-}
-
-async function handleChainResponseGeneration(responseText: string, sessionId: string) {
-  try {
-    const completion = await generateChainCompletion(responseText, sessionId);
-    return completion;
-  } catch (error) {
-    console.error('Error in chain response generation:', error);
-    throw error;
-  }
-}
-
 async function handleJsonChainResponseGeneration(
   responseText: string,
   sessionId: string,
   prolificPid: string,
+  userId: string,
   ttsVoice: string,
 ) {
   try {
@@ -139,21 +51,12 @@ async function handleJsonChainResponseGeneration(
       responseText,
       sessionId,
       prolificPid,
+      userId,
       ttsVoice,
     );
     return completion;
   } catch (error) {
     console.error('Error in json chain response generation:', error);
-    throw error;
-  }
-}
-
-async function handleAgentResponseGeneration(responseText: string, sessionId: string) {
-  try {
-    //const completion = await generateAgentCompletion(responseText, sessionId);
-    return null;
-  } catch (error) {
-    console.error('Error in agent response generation:', error);
     throw error;
   }
 }
@@ -174,12 +77,10 @@ async function action(obj: FormData): Promise<any> {
       const audioBlob = formData.get('audio');
       const sessionId = formData.get('sessionId') as string;
       const prolificPid = formData.get('prolificPid') as string;
+      const userId = formData.get('userId') as string;
       const useTTS = formData.get('useTTS') === 'true';
-      const useInternet = formData.get('useInternet') === 'false';
-      const usePhotos = formData.get('usePhotos') === 'false';
       const useChainMode = formData.get('useChainMode') === 'true';
       const useJsonMode = formData.get('useJsonMode') === 'true';
-      const useAgentMode = formData.get('useAgentMode') === 'false';
       const ttsVoice = formData.get('ttsVoice') as string;
 
       if (!(audioBlob instanceof Blob)) throw new Error('No audio detected');
@@ -189,35 +90,17 @@ async function action(obj: FormData): Promise<any> {
 
       let responseText = '';
 
-      if (usePhotos) {
-        responseText = (await handleImageProcessing(usePhotos, formData, transcription)) || '';
-      }
-      if (useAgentMode) {
-        responseText = (await handleAgentResponseGeneration(transcription, sessionId)) || '';
-      }
-
-      if (useChainMode && useJsonMode) {
-        console.log('Using both chain and json modes');
-        const response =
-          (await handleJsonChainResponseGeneration(
-            transcription,
-            sessionId,
-            prolificPid,
-            ttsVoice,
-          )) || '';
-        responseText = response.responseText;
-        streamable.update({ allQuestionsAnswered: response.allQuestionsAnswered });
-      }
-
-      if (useChainMode && !useJsonMode) {
-        responseText = (await handleChainResponseGeneration(transcription, sessionId)) || '';
-      }
-
-      if (!responseText && !useJsonMode) {
-        responseText = (await handleResponseGeneration(useInternet, transcription)) || '';
-      }
-
-      //responseText = await handleToolsResponse(responseText, streamable);
+      console.log('Using both chain and json modes');
+      const response =
+        (await handleJsonChainResponseGeneration(
+          transcription,
+          sessionId,
+          prolificPid,
+          userId,
+          ttsVoice,
+        )) || '';
+      responseText = response.responseText;
+      streamable.update({ allQuestionsAnswered: response.allQuestionsAnswered });
 
       streamable.update({ result: responseText });
       if (useTTS) {

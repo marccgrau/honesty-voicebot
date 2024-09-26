@@ -4,11 +4,8 @@ import { use } from 'react';
 export interface InputComponentProps {
   onSubmit: (formData: FormData) => void;
   useTTS: boolean;
-  useInternet: boolean;
-  usePhotos: boolean;
   useChainMode: boolean;
   useJsonMode: boolean;
-  useAgentMode: boolean;
 }
 
 export interface PrefilledResultsFormProps {
@@ -17,25 +14,16 @@ export interface PrefilledResultsFormProps {
 
 export interface SettingsProps {
   useTTS: boolean;
-  useInternet: boolean;
-  usePhotos: boolean;
   useChainMode: boolean;
   useJsonMode: boolean;
-  useAgentMode: boolean;
   useMessageMode: boolean;
   onTTSToggle: () => void;
-  onInternetToggle: () => void;
-  onPhotosToggle: () => void;
   onChainModeToggle: () => void;
   onJsonModeToggle: () => void;
-  onAgentModeToggle: () => void;
   onMessageModeToggle: () => void;
   setTTS: (useTTS: boolean) => void;
-  setInternet: (useInternet: boolean) => void;
-  setPhotos: (usePhotos: boolean) => void;
   setChainMode: (useChainMode: boolean) => void;
   setJsonMode: (useJsonMode: boolean) => void;
-  setAgentMode: (useAgentMode: boolean) => void;
   setMessageMode: (useMessageMode: boolean) => void;
 }
 
@@ -49,8 +37,6 @@ export interface Message {
   transcription?: string;
   audio?: string;
   result?: string;
-  weather?: string;
-  spotify?: string;
   time?: string;
   allQuestionsAnswered?: boolean;
 }

@@ -22,11 +22,7 @@ const MainContent = () => {
   const { action } = useActions<typeof AI>();
   const [useChainMode, setUseChainMode] = useState(true);
   const [useJsonMode, setJsonMode] = useState(true);
-  const [useAgentMode, setUseAgentMode] = useState(false);
   const [useTTS, setUseTTS] = useState(true);
-  const [useInternet, setUseInternet] = useState(false);
-  const [usePhotos, setUsePhotos] = useState(false);
-  const [useSpotify, setUseSpotify] = useState('');
   const [currentTranscription, setCurrentTranscription] = useState<{
     transcription: string;
     responseTime: number;
@@ -42,6 +38,7 @@ const MainContent = () => {
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [prolificPid, setProlificPid] = useState<string | null>(null);
   const [ttsVoice, setTtsVoice] = useState(config.ttsVoice);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     let sessionId = localStorage.getItem('sessionId');
@@ -56,6 +53,12 @@ const MainContent = () => {
     if (prolificPid) {
       setProlificPid(prolificPid);
       localStorage.setItem('prolificPid', prolificPid);
+    }
+    // Extract Qualtrics userId from the URL
+    const userId = searchParams.get('USER_ID');
+    if (userId) {
+      setUserId(userId);
+      localStorage.setItem('userId', userId);
     }
 
     let ttsVoice = localStorage.getItem('ttsVoice');
@@ -74,20 +77,12 @@ const MainContent = () => {
     setUseTTS(!useTTS);
   };
 
-  const handleInternetToggle = () => {
-    setUseInternet(!useInternet);
-  };
-
   const handleChainModeToggle = () => {
     setUseChainMode(!useChainMode);
   };
 
   const handleJsonModeToggle = () => {
     setJsonMode(!useJsonMode);
-  };
-
-  const handleAgentModeToggle = () => {
-    setUseAgentMode(!useAgentMode);
   };
 
   const handleMessageModeToggle = () => {
@@ -119,9 +114,6 @@ const MainContent = () => {
           responseTime: transcriptionResponseTime,
         });
       }
-      if (message && message.weather && typeof message.weather === 'string') {
-        setCurrentUIComponent({ component: 'weather', data: JSON.parse(message.weather) });
-      }
       if (message && message.result && typeof message.result === 'string') {
         messageResponseTime = (Date.now() - (transcriptionCompletionTime || startTime)) / 1000;
         setMessage({ message: message.result, responseTime: messageResponseTime });
@@ -132,9 +124,6 @@ const MainContent = () => {
         setIsAudioPlaying(true);
         audio.play();
         audio.onended = () => setIsAudioPlaying(false);
-      }
-      if (message && message.spotify && typeof message.spotify === 'string') {
-        setUseSpotify(message.spotify);
       }
       if (message && message.allQuestionsAnswered) {
         console.log('All questions answered');
@@ -194,11 +183,8 @@ const MainContent = () => {
               <InputComponent
                 onSubmit={handleSubmit}
                 useTTS={useTTS}
-                useInternet={useInternet}
-                usePhotos={usePhotos}
                 useChainMode={useChainMode}
                 useJsonMode={useJsonMode}
-                useAgentMode={useAgentMode}
               />
               {useTTS && isAudioPlaying && (
                 <div className="flex space-x-2">
@@ -247,13 +233,6 @@ const MainContent = () => {
                     )}
                   </div>
                 )}
-                {currentUIComponent && currentUIComponent.component === 'weather' && (
-                  <WeatherData data={currentUIComponent.data} />
-                )}
-                {currentUIComponent && currentUIComponent.component === 'time' && (
-                  <ClockComponent />
-                )}
-                {useSpotify && <SpotifyTrack trackId={useSpotify} width={300} height={80} />}
               </div>
             </div>
           )}
@@ -280,37 +259,25 @@ const MainContent = () => {
       {showSettings && (
         <Settings
           useTTS={useTTS}
-          useInternet={useInternet}
-          usePhotos={usePhotos}
           useChainMode={useChainMode}
           useJsonMode={useJsonMode}
-          useAgentMode={useAgentMode}
           useMessageMode={useMessageMode}
           onTTSToggle={handleTTSToggle}
-          onInternetToggle={handleInternetToggle}
-          onPhotosToggle={() => setUsePhotos(!usePhotos)}
           onChainModeToggle={handleChainModeToggle}
           onJsonModeToggle={handleJsonModeToggle}
-          onAgentModeToggle={handleAgentModeToggle}
           onMessageModeToggle={handleMessageModeToggle}
           setTTS={setUseTTS}
-          setInternet={setUseInternet}
-          setPhotos={setUsePhotos}
           setChainMode={setUseChainMode}
           setJsonMode={setJsonMode}
-          setAgentMode={setUseAgentMode}
           setMessageMode={setMessageMode}
         />
       )}
       {config.useAttributionComponent && (
         <AttributionComponent
-          usePhotos={usePhotos}
-          useInternet={useInternet}
           useTTS={useTTS}
           useRateLimiting={config.useRateLimiting}
           useChainMode={useChainMode}
           useJsonMode={useJsonMode}
-          useAgentMode={useAgentMode}
         />
       )}
     </div>

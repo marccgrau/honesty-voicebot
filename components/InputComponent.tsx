@@ -6,11 +6,8 @@ import { InputComponentProps } from '../types/components';
 const InputComponent: React.FC<InputComponentProps> = ({
   onSubmit,
   useTTS,
-  useInternet,
-  usePhotos,
   useChainMode,
   useJsonMode,
-  useAgentMode,
 }) => {
   const [recording, setRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -53,11 +50,8 @@ const InputComponent: React.FC<InputComponentProps> = ({
         const formData = new FormData();
         formData.append('audio', audioBlob);
         formData.append('useTTS', String(useTTS));
-        formData.append('useInternet', String(useInternet));
-        formData.append('usePhotos', String(usePhotos));
         formData.append('useChainMode', String(useChainMode));
         formData.append('useJsonMode', String(useJsonMode));
-        formData.append('useAgentMode', String(useAgentMode));
 
         const sessionId = localStorage.getItem('sessionId');
         formData.append('sessionId', sessionId!);
@@ -65,6 +59,11 @@ const InputComponent: React.FC<InputComponentProps> = ({
         const prolificPid = localStorage.getItem('prolificPid');
         if (prolificPid) {
           formData.append('prolificPid', prolificPid);
+        }
+
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+          formData.append('userId', userId);
         }
 
         const ttsVoice = localStorage.getItem('ttsVoice');

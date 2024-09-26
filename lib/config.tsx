@@ -36,19 +36,13 @@ export const config = {
   enableResponseTimes: false, // Display response times for each message
   enableSettingsUIToggle: false, // Display the settings UI toggle
   enableTextToSpeechUIToggle: true, // Display the text to speech UI toggle
-  enableInternetResultsUIToggle: true, // Display the internet results UI toggle
-  enableUsePhotUIToggle: false, // Display the use photo UI toggle
   enableChainModeUIToggle: true, // Display the chain mode UI toggle
   enableJsonModeUIToggle: true, // Display the json mode UI toggle
-  enableAgentModeUIToggle: false, // Display the agent mode UI toggle
   useAttributionComponent: false, // Use the attribution component to display the attribution of the AI models/services used
   enableMessageModeUIToggle: true, // Display the message mode UI toggle
 
   // Rate limiting settings
   useRateLimiting: false, // Use Upstash rate limiting to limit the number of requests per user
-
-  // Tracing with Langchain
-  useLangSmith: false, // Use LangSmith by Langchain to trace the execution of the functions in the config.tsx set to true to use.
 
   // Set model temperature
   modelTemperature: 0.7,

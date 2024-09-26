@@ -276,6 +276,7 @@ async function generateCompletion(
   transcription: string,
   sessionId: string,
   prolificPid: string,
+  userId: string,
   ttsVoice: string,
 ): Promise<any> {
   try {
@@ -308,7 +309,7 @@ async function generateCompletion(
     responses = completion.json?.lc_kwargs?.content || initialResponses;
 
     // Save updated responses to MongoDB
-    await saveResponses(sessionId, prolificPid, ttsVoice, responses);
+    await saveResponses(sessionId, prolificPid, userId, ttsVoice, responses);
 
     if (nextQuestion === 'All questions have been answered.') {
       return {
@@ -332,10 +333,11 @@ export const generateJsonChainCompletion = async (
   transcription: string,
   sessionId: string,
   prolificPid: string,
+  userId: string,
   ttsVoice: string,
 ): Promise<any> => {
   if (config.inferenceModelProvider !== 'openai') {
     throw new Error('This functionality is not yet available for the specified provider.');
   }
-  return generateCompletion(transcription, sessionId, prolificPid, ttsVoice);
+  return generateCompletion(transcription, sessionId, prolificPid, userId, ttsVoice);
 };
