@@ -6,9 +6,9 @@ const DescriptionCard: React.FC = () => {
       <h2 className="mb-2 text-lg font-bold">Welcome to the Experiment!</h2>
       <p className="text-gray-700">
         In this experiment, we will conduct a conversation to gather the information for calculating
-        the health insurance premium reduction. Your Prolific bonus payment will depend on the
-        premium reduction amount you achieve. The top 10% of the healthiest participants will
-        receive a bonus payment.
+        the health insurance premium reduction. Your bonus payment will depend on the premium
+        reduction amount you achieve. We defined a benchmark based on previous data, if you are
+        healthier than the benchmark, you will get an additional bonus payment of 5 CHF.
       </p>
       <p className="mt-2 text-gray-700">
         Follow the conversation and answer the questions as accurately as possible. Your responses
