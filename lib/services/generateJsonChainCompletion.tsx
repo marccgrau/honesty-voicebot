@@ -158,15 +158,12 @@ function initializeConversationChain(prompt: ChatPromptTemplate) {
 }
 
 // Function to handle the chain with history
-function fetchConversationChain(
-  chain: any,
-  sessionId: string,
-): RunnableWithMessageHistory<any, any> {
+function fetchConversationChain(chain: any, userId: string): RunnableWithMessageHistory<any, any> {
   return new RunnableWithMessageHistory({
     runnable: chain,
     getMessageHistory: () =>
       new UpstashRedisChatMessageHistory({
-        sessionId,
+        sessionId: userId,
         config: {
           url: UPSTASH_REDIS_REST_URL!,
           token: UPSTASH_REDIS_REST_TOKEN!,
@@ -242,12 +239,12 @@ function initializeJsonFillChain(prompt: any) {
 }
 
 // Function to handle JSON filling chain
-function fetchJsonFillChain(chain: any, sessionId: string): RunnableWithMessageHistory<any, any> {
+function fetchJsonFillChain(chain: any, userId: string): RunnableWithMessageHistory<any, any> {
   return new RunnableWithMessageHistory({
     runnable: chain,
     getMessageHistory: () =>
       new UpstashRedisChatMessageHistory({
-        sessionId,
+        sessionId: userId,
         config: {
           url: UPSTASH_REDIS_REST_URL!,
           token: UPSTASH_REDIS_REST_TOKEN!,
@@ -262,11 +259,11 @@ function fetchJsonFillChain(chain: any, sessionId: string): RunnableWithMessageH
 function fetchParallelRunnableConvoAndJsonFill(
   conversationChain: any,
   jsonFillChain: any,
-  sessionId: string,
+  userId: string,
 ) {
   const finalChain = RunnableMap.from({
-    conversation: fetchConversationChain(conversationChain, sessionId),
-    json: fetchJsonFillChain(jsonFillChain, sessionId),
+    conversation: fetchConversationChain(conversationChain, userId),
+    json: fetchJsonFillChain(jsonFillChain, userId),
   });
   return finalChain;
 }
@@ -298,11 +295,11 @@ async function generateCompletion(
     const parallelChain = fetchParallelRunnableConvoAndJsonFill(
       conversationChain,
       jsonFillChain,
-      sessionId,
+      userId,
     );
     const completion = await parallelChain.invoke(
       { input: transcription, responses: responses, question: nextQuestion },
-      { configurable: { sessionId } },
+      { configurable: { sessionId: userId } },
     );
     console.debug('Completion:', completion);
 

@@ -54,6 +54,10 @@ const MainContent = () => {
       setProlificPid(prolificPid);
       localStorage.setItem('prolificPid', prolificPid);
     }
+    if (!prolificPid) {
+      setProlificPid('lab');
+      localStorage.setItem('prolificPid', 'lab');
+    }
     // Extract Qualtrics userId from the URL
     const userId = searchParams.get('USER_ID');
     if (userId) {
