@@ -31,7 +31,7 @@ const ThankYouPage: React.FC = () => {
         <h2 className="mb-4 text-2xl font-bold">Thank You!</h2>
         <p className="mb-4 text-gray-700">Your responses have been successfully submitted.</p>
         <p className="mb-4 text-gray-700">
-          Please go back to Prolific to finalize the questionnaire.
+          Please go back to the original tab to finalize the questionnaire.
         </p>
         <p className="mb-4 text-gray-700">
           Make sure to copy the following code to proceed with the questionnaire:
