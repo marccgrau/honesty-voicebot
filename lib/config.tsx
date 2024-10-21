@@ -16,8 +16,8 @@ export const config = {
   jsonValidationModel: 'gpt-4o-mini',
 
   // Whisper settings
-  whisperModelProvider: 'groq', // 'groq' or 'openai'
-  whisperModel: 'whisper-large-v3', // Groq: 'whisper-large-v3' OpenAI: 'whisper-1'
+  whisperModelProvider: 'openai', // 'groq' or 'openai'
+  whisperModel: 'whisper-1', // Groq: 'whisper-large-v3' OpenAI: 'whisper-1'
 
   // TTS settings
   ttsModelProvider: 'openai', // only openai supported for now...
